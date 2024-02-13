@@ -5,7 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import es.dsw.models.Usuario;
 
+//Interfaz que contiene el repositorio de usuarios de la base de datos
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
+public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{	
 	
 }

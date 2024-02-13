@@ -1,0 +1,99 @@
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>WORD YACHT - Juego</title>
+	<link th:href="@{bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet" id="bootstrap-css">
+	<link th:href="@{styles/juego.css}" rel="stylesheet" id="bootstrap-css">
+	<script th:src="@{js/jquery-3.6.1.min.js}"></script>
+	<script th:src="@{bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{js/juego.js}"></script>
+</head>
+
+<body>
+	<div class="fila" id="fila1">
+		<div class="perfil">
+			<div class="avatar"></div>
+			<div class="nombreJugador" id="j1">NombreJugador</div>
+			<div class="puntosJugador" id="puntosJ1">0</div>
+		</div>
+		<div class="perfil">
+			<div class="avatar"></div>
+			<div class="nombreJugador" id="j1">NombreJugador</div>
+			<div class="puntosJugador" id="puntosJ1">0</div>
+		</div>
+		<div class="perfil">
+			<div class="avatar"></div>
+			<div class="nombreJugador" id="j1">NombreJugador</div>
+			<div class="puntosJugador" id="puntosJ1">0</div>
+		</div>
+		<div class="perfil">
+			<div class="avatar"></div>
+			<div class="nombreJugador" id="j1">NombreJugador</div>
+			<div class="puntosJugador" id="puntosJ1">0</div>
+		</div>
+	</div>
+	<div class="fila" id="fila2">
+		<div id="palabras">
+			<div id="libreta">
+				<table id="tablaPalabras">
+					<tr th:each="numero : ${#numbers.sequence(1,12)}">
+						<td th:id = "${numero}"></td>
+						<td th:id = "${numero+12}"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="columna" id="col2">		
+			<div id="cuerpo">
+				<div id="letras">
+					<div th:id="${numero}" class="letra" hidden type="button" th:each="numero : ${#numbers.sequence(1,10)}">
+						<div class="textoLetra">A</div>
+					</div>
+				</div>
+				<div id="mensaje">El turno empezará en <span id="tiempo">1</span></div>
+				<div id="letras2">
+				</div>
+				<div id="botones" hidden>
+					<a id="btnLimpiar" type="button" class="btn btn-warning">Limpiar</a>
+					<a id="btnEnviar" type="button" class="btn btn-primary">Enviar</a>
+				</div>
+				<div id="cuentaAtras">TIEMPO: <span id="tiempo2">10</span></div>
+			</div>
+			<div id="pie">
+				<a id="btnAbandonar" type="button" class="btn btn-danger" th:href="@{/home}">Abandonar</a>
+				<div id="postit">
+					<table>
+						<tr id="tresletras"><th>3 letras</th><td>0</td></tr>
+						<tr id="cuatroletras"><th>4 letras</th><td>0</td></tr>
+						<tr id="cincoletras"><th>5 letras</th><td>0</td></tr>
+						<tr id="seisletras"><th>6 letras</th><td>0</td></tr>
+						<tr id="massieteletras"><th>+7 letras</th><td>0</td></tr>
+						<tr><th>Mejor inicial: <span id="inicial">S</span></th><td id="ocurrenciasInicial">0</td></tr>
+						<tr></tr>
+					</table>
+				</div>
+			</div> 
+		</div>
+		<div id="categorias">
+			<div id="pizarra">
+				<table id="tablaCategorias">
+					<tr><th>Nombre: </th><td colspan="4">NombreJugador</td></tr>
+					<tr><th class="titulo">CATEGORÍA</th><th class="titulo" colspan="3">PALABRAS</th><th class="titulo">PUNTOS</th></tr>
+					<tr id="tres"><th>3 letras</th><td class="npalabras">3</td><td class="npalabras">5</td><td class="npalabras">10</td><td class="puntuacion">0</td></tr>
+					<tr id="cuatro"><th>4 letras</th><td class="npalabras">2</td><td class="npalabras">4</td><td class="npalabras">6</td><td class="puntuacion">0</td></tr>
+					<tr id="mascinco"><th>+5 letras</th><td class="npalabras">1</td><td class="npalabras">2</td><td class="npalabras">3</td><td class="puntuacion">0</td></tr>
+					<tr id="escalera"><th>Escalera</th><td class="npalabras">3</td><td class="npalabras">4</td><td class="npalabras">5</td><td class="puntuacion">0</td></tr>
+					<tr id="ini"><th>Inicial</th><td class="npalabras">3</td><td class="npalabras">5</td><td class="npalabras">10</td><td class="puntuacion">0</td></tr>
+					<tr id="todas"><th>Todas</th><td colspan="3"></td><td class="puntuacion">0</td></tr>
+					<tr id="numPalabras"><th>Nº palabras</th><td colspan="3">0</td><td class="puntuacion">0</td></tr>
+					<tr id="yacht"><th>Yacht</th><td colspan="3">15</td><td class="puntuacion">0</td></tr>
+					<tr><th>TOTAL</th><td colspan="3"></td><td id="total" style="font-weight: bold;">0</td></tr>	
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

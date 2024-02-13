@@ -6,43 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>WORD YACHT - Acceso</title>
 	<link th:href="@{bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet" id="bootstrap-css">
-	<script th:src="@{js/jquery-3.6.1.min.js}"></script>
+	<link th:href="@{styles/index.css}" rel="stylesheet">
 	<script th:src="@{bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
 </head>
-
 <body>
-	Esta es la página principal.
-	Rol : <span sec:authentication="principal.authorities"></span>
-	NombreUsuario : <span sec:authentication="principal.username"></span>
-	
-	<p><a type="button" class="btn btn-primary">Ver perfil</a></p>
-	<p><a type="button" class="btn btn-primary">Ver estadísticas</a></p>
-	<p><a type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Jugar en partida privada</a></p>
-	<div class="modal" id="myModal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">Jugar en partida privada</h4>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-				<div class="modal-body">
-					<p><a href="#">Crear partida privada</a></p>
-					<p><a href="#">Unirse a partida privada</a></p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-				</div>
-			</div>
-		</div>
+	<div class="titulo"></div>
+	<div id="dados"></div>
+	<div id="botones">
+		<a th:href="@{/home}">Iniciar sesión</a>
+		<a th:href="@{/register}">Registrarse</a>		
 	</div>
-	<p><a type="button" class="btn btn-primary">Jugar en partida pública</a></p>
-	<p><a type="button" class="btn btn-primary">Añadir palabra</a></p>
-	<p><a type="button" class="btn btn-primary">Eliminar palabra</a></p>
-	<p><a type="button" class="btn btn-primary">Ver lista de usuarios</a></p>
-	<p><a type="button" class="btn btn-primary">Eliminar cuenta de usuario</a></p>
-	<form method="POST" th:action="@{/logout}">
-		<button href="#" type="submit">Cerrar sesión</button>
-	</form>
 </body>
-
 </html>

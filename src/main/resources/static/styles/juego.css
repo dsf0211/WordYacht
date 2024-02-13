@@ -1,0 +1,225 @@
+body{
+	background-image: url(../img/fondo_espacio.jpg);
+	background-size: 100% 100%;
+}
+
+*{
+	text-align: center;
+	font-size: 3vh;
+	color: white;
+}
+
+/*Cada una de las filas*/
+.fila{
+	display: flex;	
+}
+
+#fila1{
+	height: max-content;
+	padding-left: 1vh;
+	padding-right: 1vh;
+	justify-content: space-between;
+}
+
+#fila2{
+	height: max-content;
+	justify-content: space-between;
+}
+
+/*Cada uno de los contenedores donde se muestra el avatar y el nombre del jugador*/
+.perfil{
+	height: max-content;
+}
+
+/*Avatar del jugador*/
+.avatar{
+	aspect-ratio: 1/1;
+	background-image: url(../img/1.png);
+	background-size: contain;
+	height: 18vh;
+	border-radius: 50%;
+	border: 1px solid blue;
+}
+
+#palabras,#categorias{
+	width: 25%;
+}
+
+#col2{
+	width: 50%;
+}
+
+/*Contenedor de la imagen de la libreta*/
+#libreta{
+	height: 100%;
+	aspect-ratio: 0.76/1;
+	background-image:url(../img/libreta.png);
+	background-size: 100% 100%;
+}
+
+/*Lista de palabras formadas*/
+#tablaPalabras{
+	height: 100%;
+	width: 100%;
+}
+
+#tablaPalabras td{
+	font-size: 2.4vh;
+	font-family: "Comic Sans MS", "Comic Sans", cursive;
+	color: black;
+}
+
+.nombreJugador{
+	text-align: center;
+}
+
+.fila, .avatar{
+	margin:auto;
+}
+
+/*Contenedor de las letras añadidas*/
+
+#letras2, #letras{
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+.letra, .letra2{
+	height: 8vh;
+	aspect-ratio: 1/1;
+	border-radius: 20%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	margin-right: 1%;
+}
+
+/*La letra de cada dado*/
+.textoLetra{
+	font-size: 5vh;
+	color: red;
+	font-weight: bold;
+}
+
+/*Zona donde se inicia el juego, se forman las palabras y se muestra el tiempo restante*/
+
+#cuerpo{
+	height: 55%;
+}
+
+#pie{
+	height: 45%;
+}
+
+/*Contenedor del tiempo restante para empezar el turno*/
+#mensaje{
+	font-size: 3vh;
+	background-color: greenyellow;
+	padding: 2vh;
+	border-radius: 50%;
+	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	font-style: italic;
+	color:black
+}
+
+/*Tiempo restante para empezar el turno*/
+#tiempo{
+	color: red;
+}
+
+/*Contenedor del tiempo restante*/
+#cuentaAtras{
+	width: 100%;
+}
+
+/*Contenedor de los botones de enviar y limpiar palabras*/
+#botones{
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 30% 0 30%;
+}
+
+/*Zona donde aparece el botón de abandonar partida y el post-it con el número de palabras formadas*/
+#pie{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/*Post-it con el número de palabras formadas*/
+#postit{
+	aspect-ratio: 1/1;
+	height: 100%;
+	background-image: url(../img/postit.png);
+	background-size: 100% 100%;
+	margin-left: 5%;
+	padding-top: 3%;
+	padding-left: 1%;
+}
+
+#postit > table{
+	height: 90%;
+	width: 90%;
+	transform: rotate(3deg);
+}
+
+#postit > table td,#postit > table th, #postit > table span{
+	font-size: 2vh;
+	color: black;
+	font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
+#postit > table td{
+	width: 30%;
+}
+
+#postit > table th{
+	width: 70%;
+}
+
+/*Contenedor de las categorias de palabras*/
+#categorias{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/*Contenedor de la imagen de la pizarra donde aparece la tabla de categorias*/
+#pizarra{
+	aspect-ratio: 0.76/1;
+	height: 100%;
+	background-image: url(../img/pizarra.png);
+	background-size: 100% 100%;
+	padding: 7% 8% 7% 8%;
+}
+
+/*Tabla de categorias de palabras*/
+#tablaCategorias{
+	width: 100%;
+	height: 100%;
+}
+
+#tablaCategorias td, #tablaCategorias th{
+	font-size: 2.5vh;
+	color: white;
+	line-height: 2.5vh;
+}
+
+#tablaCategorias td{
+	font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
+/*Celdas de categorias, palabras y puntos*/
+.titulo{
+	width: 33%;
+}
+
+/*Celdas donde aparece el numero de palabras*/
+.npalabras{
+	width: 10.89%;
+}

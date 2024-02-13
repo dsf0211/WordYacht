@@ -1,11 +1,25 @@
 package es.dsw.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKeyJoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "usuario")
@@ -24,28 +38,82 @@ public class Usuario {
 	private String apellidos;
 	@Column(name = "email")
 	private String email;
-	@Column(name = "id_rol_us")
-	private int id_rol;
+	@Column(name = "insert_date", insertable = false)
+	private String fecha_registro;
+	@Column(name = "puntos_acum")
+	private int acumulado;
+	@Column(name = "avatar")
+	private int avatar;
+    @Column(name ="id_rol_us", insertable = false)
+    private int idRol;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_rol_us", insertable = false, updatable = false)
+    private Rol rol;
+
+    @ElementCollection
+    @CollectionTable(name = "usuario_partida",
+        joinColumns = {@JoinColumn(name = "id_usuario_up", referencedColumnName = "id_usuario")})
+    @MapKeyJoinColumn(name = "id_partida_up")
+    @Column(name = "puntos")
+    private Map<Partida, Integer> partidas = new HashMap<>();
+    
+    @Transient
+    private ArrayList<String> palabras = new ArrayList<String>();
+    
+    @Transient
+    private ArrayList<String> categorias = new ArrayList<String>();    
+    
 	public Usuario() {
 		
 	}
 	
-	public Usuario(int idUsuario, String nombreUsuario, String contra, String nombre, String apellidos, String email) {
-		this.idUsuario = idUsuario;
+	public Usuario(String nombreUsuario, String contra, String nombre, String apellidos, String email) {
 		this.nombreUsuario = nombreUsuario.equals("") ? null : nombreUsuario;
 		this.contra = contra.equals("") ? null : contra;
 		this.nombre = nombre.equals("") ? null : nombre;
 		this.apellidos = apellidos.equals("") ? null : apellidos;
 		this.email = email.equals("") ? null : email;
 	}
-
+	// Metodo que asocia una partida a un usuario o modifica los puntos del usuario en la partida
+	public void setPartidaActual(Partida partida, int puntos) {
+	    this.partidas.put(partida, puntos);
+	} 
 	
-	public int getId_rol() {
-		return id_rol;
+	public int getIdRol() {
+		return idRol;
 	}
 
-	public void setId_rol(int id_rol) {
-		this.id_rol = id_rol;
+	public String getFecha_registro() {
+		return fecha_registro;
+	}
+
+	public void setFecha_registro(String fecha_registro) {
+		this.fecha_registro = fecha_registro;
+	}
+
+	public int getAcumulado() {
+		return acumulado;
+	}
+
+	public void setAcumulado(int acumulado) {
+		this.acumulado = acumulado;
+	}
+
+	public int getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(int avatar) {
+		this.avatar = avatar;
+	}
+
+	public Rol getRol() {
+		return rol;
+	}
+
+	public void setRol(Rol rol) {
+		this.rol = rol;
 	}
 
 	public int getIdUsuario() {
@@ -95,4 +163,30 @@ public class Usuario {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public Map<Partida, Integer> getPuntosPorPartida() {
+		return partidas;
+	}
+
+	public void setPuntosPorPartida(Map<Partida, Integer> puntosPorPartida) {
+		this.partidas = puntosPorPartida;
+	}
+
+	public ArrayList<String> getPalabras() {
+		return palabras;
+	}
+
+	public void setPalabras(ArrayList<String> palabras) {
+		this.palabras = palabras;
+	}
+
+	public ArrayList<String> getCategorias() {
+		return categorias;
+	}
+
+	public void setCategorias(ArrayList<String> categorias) {
+		this.categorias = categorias;
+	}
+	
 }
+

@@ -8,16 +8,26 @@
     	<link th:href="@{bootstrap/4.3.1/css/bootstrap.min.css}" rel="stylesheet" id="bootstrap-css">
     	<script th:src="@{js/jquery-3.6.1.min.js}"></script>
     	<script th:src="@{bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
+    	<script>
+			function mostrarContrasenia() {
+			  if ($("#password").prop("type") === "password") {
+			    $("#password").prop("type", "text");
+			  } else {
+			    $("#password").prop("type", "password");
+			  }
+			}
+		</script>
+    	<link th:href="@{styles/login-register.css}" rel="stylesheet">
 	</head>
-	<body>
+	<body class="p-3 mb-2 bg-dark text-white">
 		<h2>Registrarse</h2>
 		<form method="POST" th:action="@{/addUser}">
-			<div class="form-group"><label>Nombre de usuario:</label><input type="text" name="username" autocomplete="off"></div>
-			<div class="form-group"><label>Contraseña:</label><input type="password" name="password"></div>
-			<div class="form-group"><label>Nombre:</label><input type="text" name="name" autocomplete="off"></div>
-			<div class="form-group"><label>Apellidos:</label><input type="text" name="surnames" autocomplete="off"></div>
-			<div class="form-group"><label>E-Mail:</label><input type="email" name="email" autocomplete="off"></div>
-			<button type="submit">Registrarse</button>
+			<div class="form-group"><label>Nombre de usuario:</label><input class="form-control" type="text" name="username" autocomplete="off"></div>
+			<div class="form-group"><label>Contraseña:</label><input id="password" class="form-control" type="password" tabindex="-1" name="password"><input type="checkbox" onclick="mostrarContrasenia()">Mostrar contraseña</div>
+			<div class="form-group"><label>Nombre:</label><input class="form-control" type="text" name="name" autocomplete="off"></div>
+			<div class="form-group"><label>Apellidos:</label><input class="form-control" type="text" name="surnames" autocomplete="off"></div>
+			<div class="form-group"><label>E-Mail:</label><input class="form-control" type="email" name="email" autocomplete="off"></div>
+			<button class="btn btn-primary" type="submit">Enviar</button>
 			<p th:if = "${param.error}" style="color: red;">Hubo un error en la inserción de datos.</p>
 		</form>
 	</body>

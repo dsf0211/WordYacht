@@ -1,0 +1,186 @@
+/*Imagen de fondo y otras propiedades del cuerpo de la pagina*/
+body {
+	background-image: url(../img/fondo_espacio.jpg);
+	background-size: cover;
+	justify-content: center;
+	align-items: center;
+	margin: auto;
+	display: flex;
+	font-size: 16px;	
+}
+
+/*Propiedades del titulo*/
+.titulo {
+	width: 100%;
+	height: 15%;
+	background-image: url(../img/titulo.png);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+/* Contenedor de los elementos*/
+.menu {
+	position: relative;
+	width: 100vh;
+	height: 100vh;
+	margin: auto;
+}
+
+/*Propiedades comunes de los botones*/
+.menu a {
+	aspect-ratio: 1/1;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	border-radius: 50%;
+	line-height: 90%;
+	text-align: center;
+	font-weight: bold;
+	color: silver;
+	box-shadow: 0 0 25px white;
+	transition: transform 0.3s ease;
+}
+
+.menu a:hover,
+#elegirAvatar a:hover {
+	text-decoration: none;
+	transform: scale(1.15);
+	box-shadow: 0 0 50px white;
+}
+
+/*Establecer tamaños diferentes de los botones*/
+.bs {
+	width: 20%;
+	object-fit: cover;	
+	font-size: 2.5em;
+}
+
+.bm {
+	width: 30%;	
+	font-size: 3.5em;
+}
+
+.bl {
+	width: 40%;	
+	font-size: 4.5em;
+}
+
+/*Imagenes de fondo y posicion de los botones*/
+#comoJugar {
+	background-image: url(../img/b_orange.png);
+	top: 20%;
+}
+
+#jugar {
+	background-image: url(../img/b_green.png);
+	left: 30%;
+	top: 35%;
+}
+
+#perfil {
+	background-image: url(../img/b_aqua.png);
+	right: 0;
+	top: 30%;
+}
+
+#estadisticas {
+	background-image: url(../img/b_red.png);
+	bottom: 10%;
+}
+
+#privada {
+	background-image: url(../img/b_yellow.png);
+	right: 0;
+	bottom: 10%;
+}
+
+/*Botones del administrador y cerrar sesion*/
+.admin, form {
+	position: relative;
+	width: 30vw;
+	height: 100vh;
+	min-width: 20vw;
+	margin: 0;
+}
+
+.admin a, form button {
+	position: absolute;
+	background-color: silver;
+	height: 6%;
+	width: 65%;
+	font-size: 2em;
+	border-radius: 1vh;
+	text-align: center;
+	margin: auto;
+	bottom: 2%;
+}
+
+#verUsuarios {
+	bottom: 12%;
+}
+
+form button {
+	bottom: 2%;
+	right: 0;
+	width: 50%;
+}
+
+.admin a:hover, form button:hover {
+	background-color: dimgray;
+}
+
+/*Ventana Mi perfil*/
+#elegirAvatar div a, #avatar {
+	width: 50px;
+	height: 50px;
+	background-size: cover;
+	border-radius: 50%;
+	transition: transform 0.3s ease;
+}
+#avatar  {
+	width: 70px;
+	height: 70px;	
+}
+#elegirAvatar {
+	border: solid 1px;	
+}
+#elegirAvatar div{
+	display: inline-block;
+}
+
+/* Ventanas Gestionar palabras y Gestionar Usuarios*/
+.seleccionada { 
+    background-color: white !important;
+    color: black !important;
+}
+  #listaPalabras {
+    list-style-type: none;
+    height: 300px;
+    overflow-y: auto;
+  }
+  #listaPalabras li {
+    margin-bottom: 5px;
+    cursor: pointer;    
+  }
+  #listaPalabras li:hover {
+    background-color: lightgray;
+  }
+
+/* Ventana Partida privada */
+fieldset {
+	height: 95%;
+}
+legend {
+	font-size: 1.2em;
+}
+	
+  
+
+
+
+

@@ -1,0 +1,15 @@
+
+h2, form {
+	width: 20%;
+	margin: auto;
+}
+h2 {
+	margin-top: 6%;
+	margin-bottom: 2%;
+	text-align: center;
+}
+form {
+	border: solid 1px gray;
+	border-radius: 3%;
+	padding: 2%;
+}

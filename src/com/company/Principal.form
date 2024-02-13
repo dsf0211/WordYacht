@@ -1,0 +1,1051 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.company.Principal">
+  <grid id="27dc6" binding="panelEntrada" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="20" bottom="20" right="20"/>
+    <constraints>
+      <xy x="20" y="20" width="1414" height="1029"/>
+    </constraints>
+    <properties>
+      <background color="-15122351"/>
+      <focusable value="false"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="eb039" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="357" height="93"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-15122351"/>
+          <focusable value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="6c25f" class="javax.swing.JList" binding="cuadroLista">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="0" anchor="8" fill="2" indent="0" use-parent-layout="false">
+                <preferred-size width="260" height="50"/>
+              </grid>
+            </constraints>
+            <properties>
+              <focusable value="false"/>
+              <font name="Verdana" size="20" style="1"/>
+              <model/>
+            </properties>
+          </component>
+          <component id="e746d" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="144" height="24"/>
+              </grid>
+            </constraints>
+            <properties>
+              <focusable value="false"/>
+              <font name="Cambria Math" size="20" style="1"/>
+              <foreground color="-1"/>
+              <text value="LISTA DE PALABRAS"/>
+            </properties>
+          </component>
+          <component id="e4208" class="javax.swing.JTextField" binding="contador">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="30" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <editable value="false"/>
+              <focusable value="false"/>
+              <font name="Cambria Math" size="20" style="1"/>
+              <horizontalAlignment value="0"/>
+            </properties>
+          </component>
+          <grid id="98185" layout-manager="GridLayoutManager" row-count="11" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="10" left="10" bottom="10" right="10"/>
+            <constraints>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="5" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="300" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <background color="-1"/>
+              <focusable value="false"/>
+              <font name="Candara" size="20" style="0"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="a1aef" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="CATEGORÍA"/>
+                </properties>
+              </component>
+              <component id="12ec0" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="3 letras"/>
+                </properties>
+              </component>
+              <component id="3931e" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="PALABRAS"/>
+                </properties>
+              </component>
+              <component id="6d20b" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="PUNTOS"/>
+                </properties>
+              </component>
+              <component id="97309" class="javax.swing.JTextField" binding="tresA">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="3"/>
+                </properties>
+              </component>
+              <component id="c1275" class="javax.swing.JTextField" binding="tresB">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="5"/>
+                </properties>
+              </component>
+              <component id="eba0d" class="javax.swing.JTextField" binding="tresC">
+                <constraints>
+                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="10"/>
+                </properties>
+              </component>
+              <component id="8b239" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="4 letras"/>
+                </properties>
+              </component>
+              <component id="9090b" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="5+ letras"/>
+                </properties>
+              </component>
+              <component id="64d26" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="Escalera"/>
+                </properties>
+              </component>
+              <component id="76ba7" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="Inicial"/>
+                </properties>
+              </component>
+              <component id="8ae7e" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="Todas"/>
+                </properties>
+              </component>
+              <component id="8b8c6" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="Palabras"/>
+                </properties>
+              </component>
+              <component id="a6a9e" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="Yacht"/>
+                </properties>
+              </component>
+              <component id="30051" class="javax.swing.JTextField" binding="cuatroA">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="2"/>
+                </properties>
+              </component>
+              <component id="3bdbc" class="javax.swing.JTextField" binding="cuatroB">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="4"/>
+                </properties>
+              </component>
+              <component id="c55f4" class="javax.swing.JTextField" binding="cuatroC">
+                <constraints>
+                  <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="6"/>
+                </properties>
+              </component>
+              <component id="2d254" class="javax.swing.JTextField" binding="cincoA">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="1"/>
+                </properties>
+              </component>
+              <component id="38531" class="javax.swing.JTextField" binding="cincoB">
+                <constraints>
+                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="2"/>
+                </properties>
+              </component>
+              <component id="56190" class="javax.swing.JTextField" binding="cincoC">
+                <constraints>
+                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="3"/>
+                </properties>
+              </component>
+              <component id="36978" class="javax.swing.JTextField" binding="escA">
+                <constraints>
+                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="3"/>
+                </properties>
+              </component>
+              <component id="4ac86" class="javax.swing.JTextField" binding="escB">
+                <constraints>
+                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="4"/>
+                </properties>
+              </component>
+              <component id="b29f3" class="javax.swing.JTextField" binding="escC">
+                <constraints>
+                  <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="5"/>
+                </properties>
+              </component>
+              <component id="984bf" class="javax.swing.JTextField" binding="iniA">
+                <constraints>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="3"/>
+                </properties>
+              </component>
+              <component id="2e2a" class="javax.swing.JTextField" binding="iniB">
+                <constraints>
+                  <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="5"/>
+                </properties>
+              </component>
+              <component id="bbac1" class="javax.swing.JTextField" binding="iniC">
+                <constraints>
+                  <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="10"/>
+                </properties>
+              </component>
+              <component id="d286a" class="javax.swing.JTextField" binding="yachtA">
+                <constraints>
+                  <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-1"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="0"/>
+                  <text value="15"/>
+                </properties>
+              </component>
+              <component id="b70cf" class="javax.swing.JButton" binding="a0Button" default-binding="true">
+                <constraints>
+                  <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="10"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                  <verticalAlignment value="1"/>
+                </properties>
+              </component>
+              <component id="45c0a" class="javax.swing.JButton" binding="a0Button1" default-binding="true">
+                <constraints>
+                  <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                  <verticalAlignment value="1"/>
+                </properties>
+              </component>
+              <component id="d331c" class="javax.swing.JButton" binding="a0Button2" default-binding="true">
+                <constraints>
+                  <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <component id="10dcd" class="javax.swing.JButton" binding="a0Button3" default-binding="true">
+                <constraints>
+                  <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <component id="24088" class="javax.swing.JButton" binding="a0Button4" default-binding="true">
+                <constraints>
+                  <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <component id="7d0f9" class="javax.swing.JButton" binding="a0Button5" default-binding="true">
+                <constraints>
+                  <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <component id="4c5e3" class="javax.swing.JButton" binding="a0Button6" default-binding="true">
+                <constraints>
+                  <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <component id="437d4" class="javax.swing.JButton" binding="a0Button7" default-binding="true">
+                <constraints>
+                  <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <component id="3ba51" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="20" style="1"/>
+                  <text value="Bonus"/>
+                </properties>
+              </component>
+              <component id="75b9d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Candara" size="24" style="1"/>
+                  <text value="TOTAL"/>
+                </properties>
+              </component>
+              <component id="1ea77" class="javax.swing.JTextField" binding="total">
+                <constraints>
+                  <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="24" style="1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value="0"/>
+                </properties>
+              </component>
+              <component id="fb076" class="javax.swing.JTextField" binding="Pbonus">
+                <constraints>
+                  <grid row="9" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="-1"/>
+                    <maximum-size width="-1" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-921103"/>
+                  <editable value="false"/>
+                  <font name="Candara" size="20" style="1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <component id="825f2" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <focusable value="false"/>
+              <font name="Cambria Math" size="20" style="1"/>
+              <foreground color="-1"/>
+              <text value="PUNTUACIÓN"/>
+            </properties>
+          </component>
+          <grid id="5b0a2" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-15122351"/>
+              <focusable value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="4e25c" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="144" height="24"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-1"/>
+                  <text value="3 letras:"/>
+                </properties>
+              </component>
+              <component id="f2c7f" class="javax.swing.JTextField" binding="tres">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="30" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="13a75" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="144" height="24"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-1"/>
+                  <text value="4 letras:"/>
+                </properties>
+              </component>
+              <component id="22971" class="javax.swing.JTextField" binding="cuatro">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="30" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <horizontalAlignment value="0"/>
+                </properties>
+              </component>
+              <component id="3b4b0" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="144" height="24"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-1"/>
+                  <text value="5+ letras:"/>
+                </properties>
+              </component>
+              <component id="94369" class="javax.swing.JTextField" binding="cinco">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="30" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="89a0d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-1"/>
+                  <text value="Inicial:"/>
+                </properties>
+              </component>
+              <component id="e18cc" class="javax.swing.JTextField" binding="inicial">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="30" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <horizontalAlignment value="0"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="5edf1" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-15122351"/>
+          <focusable value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="5f6d5" class="javax.swing.JTextField" binding="nombre">
+            <constraints>
+              <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false">
+                <preferred-size width="250" height="80"/>
+                <maximum-size width="250" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <background color="-15122351"/>
+              <editable value="false"/>
+              <focusable value="false"/>
+              <font name="Segoe Print" size="40" style="1"/>
+              <foreground color="-921103"/>
+              <horizontalAlignment value="0"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <grid id="a876f" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="2" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-15122351"/>
+              <focusable value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="6fdc" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-1"/>
+                  <text value="Tiempo restante"/>
+                </properties>
+              </component>
+              <component id="8d241" class="javax.swing.JTextField" binding="temporizador">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                    <maximum-size width="70" height="40"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                  <focusable value="false"/>
+                  <font size="36" style="1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value="200"/>
+                </properties>
+              </component>
+              <component id="39b1d" class="javax.swing.JButton" binding="Empezar">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-11836633"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-921103"/>
+                  <text value="COMENZAR"/>
+                </properties>
+              </component>
+              <component id="e9209" class="javax.swing.JButton" binding="Parar">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-11836633"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-921103"/>
+                  <text value="TERMINAR"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="6eabf" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="1" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-15122351"/>
+              <focusable value="false"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="d661a" class="javax.swing.JTable" binding="tabla">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="1" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="360" height="50"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <alignmentX value="1.0"/>
+                  <focusable value="false"/>
+                  <font name="Segoe Print" size="20" style="1"/>
+                  <intercellSpacing width="1" height="1"/>
+                  <rowHeight value="40"/>
+                  <visible value="true"/>
+                </properties>
+              </component>
+              <component id="aa938" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="180" height="24"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value="Puntuación"/>
+                </properties>
+              </component>
+              <component id="84c6d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="180" height="24"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value="Jugador"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <component id="d0e1b" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <focusable value="false"/>
+          <font name="Comic Sans MS" size="48" style="1"/>
+          <foreground color="-62461"/>
+          <horizontalAlignment value="0"/>
+          <text value="WORD YACHT"/>
+        </properties>
+      </component>
+      <grid id="f497f" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="20" left="20" bottom="20" right="20"/>
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-13953523"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="39995" layout-manager="GridLayoutManager" row-count="1" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-13953523"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="137cb" class="javax.swing.JButton" binding="letra1">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <borderPainted value="true"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+              <component id="9f990" class="javax.swing.JButton" binding="letra6">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+              <component id="f17c5" class="javax.swing.JButton" binding="letra5">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+              <component id="2e011" class="javax.swing.JButton" binding="letra2">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+              <component id="7853a" class="javax.swing.JButton" binding="letra7">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+              <component id="80c30" class="javax.swing.JButton" binding="letra3">
+                <constraints>
+                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+              <component id="2c26c" class="javax.swing.JButton" binding="letra8">
+                <constraints>
+                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+              <component id="35387" class="javax.swing.JButton" binding="letra4">
+                <constraints>
+                  <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="80" height="80"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-4390910"/>
+                  <focusable value="false"/>
+                  <font name="Miriam Libre" size="40" style="1"/>
+                  <foreground color="-1"/>
+                  <rolloverEnabled value="false"/>
+                  <text value="_"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="d587c" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="20" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-13953523"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <component id="c1197" class="javax.swing.JTextField" binding="entrada">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                    <minimum-size width="250" height="-1"/>
+                    <preferred-size width="250" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <editable value="false"/>
+                  <focusCycleRoot value="false"/>
+                  <focusTraversalPolicyProvider value="false"/>
+                  <font name="Comic Sans MS" size="28" style="1"/>
+                  <horizontalAlignment value="0"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="2c2b6" class="javax.swing.JButton" binding="limpiarButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="120" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-11836633"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-921103"/>
+                  <text value="LIMPIAR"/>
+                </properties>
+              </component>
+              <component id="986a0" class="javax.swing.JButton" binding="enviarButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                    <preferred-size width="120" height="30"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-11836633"/>
+                  <focusable value="false"/>
+                  <font name="Cambria Math" size="20" style="1"/>
+                  <foreground color="-921103"/>
+                  <text value="ENVIAR"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>
