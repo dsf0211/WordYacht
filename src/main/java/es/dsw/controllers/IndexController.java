@@ -1,5 +1,8 @@
 package es.dsw.controllers;
 
+import java.util.ArrayList;
+import java.util.Map.Entry;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -122,6 +125,17 @@ public class IndexController {
 		usuario.setPartidaActual(partida,0);
 		servicioUsuarios.addUser(usuario);
 		
+		ArrayList<Usuario> jugadores = new ArrayList<Usuario>();
+		for (Usuario jugador : servicioUsuarios.getAll()) {
+			for (Entry<Partida, Integer> entry : jugador.getPuntosPorPartida().entrySet()) {
+			    Partida objPartida = entry.getKey();
+			    if (objPartida.getCodPrivada() == codigo) {
+			    	jugadores.add(jugador);
+			    }
+			}
+		}
+			
+		model.addAttribute("jugadores", jugadores);
 		return "juego";
 	}
 }

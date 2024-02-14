@@ -13,6 +13,21 @@
 </head>
 
 <body>
+	<p th:each="jugador : ${jugadores}" th:text="${jugador.nombreUsuario}"></p>
+	<div class="modal" id="resultados">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content bg-dark text-light">
+				<div class="modal-header">
+					<h4 class="modal-title">Resultados de la partida</h4>
+				</div>
+				<div class="modal-body row">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="fila" id="fila1">
 		<div class="perfil">
 			<div class="avatar"></div>
@@ -60,7 +75,7 @@
 					<a id="btnLimpiar" type="button" class="btn btn-warning">Limpiar</a>
 					<a id="btnEnviar" type="button" class="btn btn-primary">Enviar</a>
 				</div>
-				<div id="cuentaAtras">TIEMPO: <span id="tiempo2">10</span></div>
+				<div id="cuentaAtras">TIEMPO: <span id="tiempo2">1</span></div>
 			</div>
 			<div id="pie">
 				<a id="btnAbandonar" type="button" class="btn btn-danger" th:href="@{/home}">Abandonar</a>

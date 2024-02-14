@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class GameController {
 	
-	@GetMapping(value = "/results")
-	public String resultadosTurno() {
-		return "resultados";
+	@GetMapping(value = "/private")
+	public String partidaPrivada() {
+		return "juego";
+	}
+	
+	@GetMapping(value = "/public")
+	public String partidaPublica() {
+		return "juego";
 	}
 }

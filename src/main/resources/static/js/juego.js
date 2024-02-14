@@ -1,20 +1,20 @@
-$(document).ready(function () {
+$(document).ready(function() {
 	tiempoRestante("#tiempo")
 
-	function tiempoRestante(id){
-		if (id == "#tiempo"){
-			intervalo = setInterval(function(){
+	function tiempoRestante(id) {
+		if (id == "#tiempo") {
+			intervalo = setInterval(function() {
 				$("#tiempo").html(parseInt($("#tiempo").html()) - 1)
-				if ($("#tiempo").html() == "0"){
+				if ($("#tiempo").html() == "0") {
 					clearInterval(intervalo);
 					$("#mensaje").remove()
 					empezarJuego()
 				}
-			},1000)
+			}, 1000)
 		} else if (id == "#tiempo2") {
-			intervalo = setInterval(function(){
+			intervalo = setInterval(function() {
 				$("#tiempo2").html(parseInt($("#tiempo2").html()) - 1)
-				if ($("#tiempo2").html() == "0"){
+				if ($("#tiempo2").html() == "0") {
 					clearInterval(intervalo);
 					eventosElegirPuntuacion(true)
 					eventoEscribirPalabras(false)
@@ -22,34 +22,33 @@ $(document).ready(function () {
 					eventoLimpiar(false)
 					tiempoRestante(null)
 				}
-			},1000)
+			}, 1000)
 		} else {
-			intervalo = setInterval(function(){
+			intervalo = setInterval(function() {
 				$("#tiempo2").html(parseInt($("#tiempo2").html()) + 1)
-				if ($("#tiempo2").html() == "3"){
+				if ($("#tiempo2").html() == "3") {
 					clearInterval(intervalo)
-					$.ajax({
-						url: "/results",
-						method: "GET",
-						success: function (vista) {
-							$('body').html(vista);
-						},
-						error: function () {
-							alert("Error fatal")
-						}
-					})
+					$("#resultados").modal("show")
+					setTimeout(function(){
+						$("#resultados").modal("hide")
+					},5000)
 				}
-			},1000)
+			}, 1000)
 		}
 	}
 
-	$.ajax({
-		url: "/getWords",
-		method: "GET",
-		success: function (palabras) {
+	let palabrasDiccionario = []
 
+	$.ajax({
+		url: "/showWords",
+		method: "GET",
+		success: function(palabras) {
+			for (palabra of palabras) {
+				let textoPalabra = palabra.palabra
+				palabrasDiccionario.push(textoPalabra)
+			}
 		},
-		error: function () {
+		error: function() {
 			alert("Error fatal")
 		}
 	})
@@ -68,23 +67,23 @@ $(document).ready(function () {
 		tiempoRestante("#tiempo2")
 	}
 
-	function eventosElegirPuntuacion(estado){
-		if (!estado){
-			$("body").off("click",".puntuacion")
-			$("body").off("mouseover",".puntuacion")
-			$("body").off("mouseout",".puntuacion")
+	function eventosElegirPuntuacion(estado) {
+		if (!estado) {
+			$("body").off("click", ".puntuacion")
+			$("body").off("mouseover", ".puntuacion")
+			$("body").off("mouseout", ".puntuacion")
 		}
 		else {
-			$("body").on("mouseover", ".puntuacion", function () {
-				$(this).css({"font-size":"1.8vh","cursor":"pointer"})
+			$("body").on("mouseover", ".puntuacion", function() {
+				$(this).css({ "font-size": "1.8vh", "cursor": "pointer" })
 			})
-			$("body").on("mouseout", ".puntuacion", function () {
-				$(this).css({"font-size":"1.7vh","cursor":"auto"})
+			$("body").on("mouseout", ".puntuacion", function() {
+				$(this).css({ "font-size": "1.7vh", "cursor": "auto" })
 			})
-			$("body").on("click", ".puntuacion", function () {
+			$("body").on("click", ".puntuacion", function() {
 				let puntuacionElegida = $(this).html()
-				$("#total").html(puntuacionElegida).css("color","red")
-				$(this).css({"font-weight":"bold","color":"red","cursor":"auto"})
+				$("#total").html(puntuacionElegida).css("color", "red")
+				$(this).css({ "font-weight": "bold", "color": "red", "cursor": "auto" })
 				eventosElegirPuntuacion(false)
 			})
 		}
@@ -93,7 +92,7 @@ $(document).ready(function () {
 	//Deshacer todas las letras escritas
 	function limpiarLetras(evento) {
 		if (letrasEscritas > 0) {
-			$("#letras2 > div").each(function () {
+			$("#letras2 > div").each(function() {
 				limpiarLetra($(this), evento)
 			})
 		}
@@ -101,8 +100,8 @@ $(document).ready(function () {
 
 	//Evento de clic del botón Limpiar
 	function eventoLimpiar(estado) {
-		if (estado){
-			$("body").on("click", "#btnLimpiar", function () {
+		if (estado) {
+			$("body").on("click", "#btnLimpiar", function() {
 				limpiarLetras("deshacer")
 			})
 		}
@@ -113,14 +112,14 @@ $(document).ready(function () {
 
 	//Evento de clic del botón Enviar
 	function eventoEnviar(estado) {
-		if (estado){
-			$("body").on("click", "#btnEnviar", function () {
+		if (estado) {
+			$("body").on("click", "#btnEnviar", function() {
 				enviarPalabra()
 			})
 		} else {
 			$("body").off("click", "#btnEnviar")
 		}
-		
+
 	}
 
 	//Declaracion de variables
@@ -141,12 +140,12 @@ $(document).ready(function () {
 	//Se envía la palabra escrita para su posterior validación
 	function enviarPalabra() {
 		let palabra = ""
-		$(".letra2 > div").each(function () {
+		$(".letra2 > div").each(function() {
 			palabra += $(this).html()
 		})
 		if (validarPalabra(palabra)) {
 			limpiarLetras("confirmar")
-			actualizarCategoria(null,"#todas",null)
+			actualizarCategoria(null, "#todas", null)
 		}
 	}
 
@@ -165,12 +164,12 @@ $(document).ready(function () {
 	function actualizarCategoria(nOcurrencias, categoria, casos, puntuaciones) {
 		let nLetrasUsadas = 0
 		if (categoria == "#todas") {
-			$(".letra > .textoLetra").each(function(){
-				if ($(this).css("color") == "rgb(0, 0, 0)"){
+			$(".letra > .textoLetra").each(function() {
+				if ($(this).css("color") == "rgb(0, 0, 0)") {
 					nLetrasUsadas++
 				}
 			})
-			if (nLetrasUsadas == 10){
+			if (nLetrasUsadas == 10) {
 				$(categoria).children().eq(2).html("45")
 			}
 		} else if (categoria == "#escalera") {
@@ -218,96 +217,101 @@ $(document).ready(function () {
 	}
 	//Se valida la palabra enviada
 	function validarPalabra(palabra) {
-		if (idPalabra < 25) {
-			if (!palabrasFormadas.includes(palabra)) {
-				if (palabra.length >= 3) {
-					//Se añade la palabra escrita a la pizarra
-					$("#tablaPalabras #" + idPalabra).html(palabra)
+		if (palabrasDiccionario.includes(palabra)) {
+			if (idPalabra < 25) {
+				if (!palabrasFormadas.includes(palabra)) {
+					if (palabra.length >= 3) {
+						//Se añade la palabra escrita a la pizarra
+						$("#tablaPalabras #" + idPalabra).html(palabra)
 
-					palabrasFormadas.push(palabra)
-					//Se almacenan todas las escaleras diferentes formadas hasta el momento
-					longitudes.push(palabra.length)
-					longitudes.sort()
-					longitudes = Array.from(new Set(longitudes))
-					let longitudes2 = longitudes.join("")
-					for (let escalera of escaleras) {
-						if (longitudes2.includes(escalera)) {
-							escalerasFormadas.push(escalera)
-						}
-					}
-					escalerasFormadas = Array.from(new Set(escalerasFormadas))
-					//Se clasifican las palabras según el número de letra
-					switch (palabra.length) {
-						case 3:
-							palabras3.push(palabra)
-							break;
-						case 4:
-							palabras4.push(palabra)
-							break;
-						case 5:
-							palabras5.push(palabra)
-							break;
-						case 6:
-							palabras6.push(palabra)
-							break;
-						case 7:
-							palabrasmas7.push(palabra)
-							break;
-					}
-					if (palabra.length > 7) {
-						palabrasmas7.push(palabra)
-					}
-					//Se almacena la inicial de la palabra al array de las iniciales
-					inicialesRepe.push(palabra[0])
-					let inicialesSinRepetir = new Set(inicialesRepe)
-					//Se calcula el nº de ocurrencias de cada inicial, y se obtiene el mayor y su correspondiente letra 
-					for (let inicialSinRepe of inicialesSinRepetir) {
-						let ocurrencias = 0
-						for (let inicialRepe of inicialesRepe) {
-							if (inicialSinRepe == inicialRepe) {
-								ocurrencias++;
+						palabrasFormadas.push(palabra)
+						//Se almacenan todas las escaleras diferentes formadas hasta el momento
+						longitudes.push(palabra.length)
+						longitudes.sort()
+						longitudes = Array.from(new Set(longitudes))
+						let longitudes2 = longitudes.join("")
+						for (let escalera of escaleras) {
+							if (longitudes2.includes(escalera)) {
+								escalerasFormadas.push(escalera)
 							}
 						}
-						if (ocurrencias > mejorContador) {
-							mejorContador = ocurrencias
-							mejorInicial = inicialSinRepe
+						escalerasFormadas = Array.from(new Set(escalerasFormadas))
+						//Se clasifican las palabras según el número de letra
+						switch (palabra.length) {
+							case 3:
+								palabras3.push(palabra)
+								break;
+							case 4:
+								palabras4.push(palabra)
+								break;
+							case 5:
+								palabras5.push(palabra)
+								break;
+							case 6:
+								palabras6.push(palabra)
+								break;
+							case 7:
+								palabrasmas7.push(palabra)
+								break;
 						}
+						if (palabra.length > 7) {
+							palabrasmas7.push(palabra)
+						}
+						//Se almacena la inicial de la palabra al array de las iniciales
+						inicialesRepe.push(palabra[0])
+						let inicialesSinRepetir = new Set(inicialesRepe)
+						//Se calcula el nº de ocurrencias de cada inicial, y se obtiene el mayor y su correspondiente letra 
+						for (let inicialSinRepe of inicialesSinRepetir) {
+							let ocurrencias = 0
+							for (let inicialRepe of inicialesRepe) {
+								if (inicialSinRepe == inicialRepe) {
+									ocurrencias++;
+								}
+							}
+							if (ocurrencias > mejorContador) {
+								mejorContador = ocurrencias
+								mejorInicial = inicialSinRepe
+							}
+						}
+						actualizarPostit()
+						//Se actualizan todas las categorías al mismo tiempo
+						actualizarCategoria(palabras3.length, "#tres", [3, 5, 10], [15, 30, 45])
+						actualizarCategoria(palabras4.length, "#cuatro", [2, 4, 6], [15, 30, 45])
+						actualizarCategoria(palabras5.length + palabras6.length + palabrasmas7.length, "#mascinco", [1, 2, 3], [30, 50, 70])
+						actualizarCategoria(mejorContador, "#ini", [3, 5, 10], [15, 30, 45])
+						actualizarCategoria(palabrasFormadas.length, "#numPalabras", null, null)
+						actualizarCategoria(palabrasFormadas.length, "#yacht", null, null)
+						actualizarCategoria(null, "#escalera", null, [25, 50, 75])
+						idPalabra++
+						return true
+					} else {
+						alert("La palabra debe tener más de 2 letras.")
 					}
-					actualizarPostit()
-					//Se actualizan todas las categorías al mismo tiempo
-					actualizarCategoria(palabras3.length, "#tres", [3, 5, 10], [15, 30, 45])
-					actualizarCategoria(palabras4.length, "#cuatro", [2, 4, 6],[15, 30, 45])
-					actualizarCategoria(palabras5.length + palabras6.length + palabrasmas7.length, "#mascinco", [1, 2, 3], [30, 50, 70])
-					actualizarCategoria(mejorContador, "#ini", [3, 5, 10], [15, 30, 45])
-					actualizarCategoria(palabrasFormadas.length, "#numPalabras", null, null)
-					actualizarCategoria(palabrasFormadas.length, "#yacht", null, null)
-					actualizarCategoria(null, "#escalera", null, [25, 50, 75])
-					idPalabra++
-					return true
-				} else {
-					alert("La palabra debe tener más de 2 letras")
+				}
+				else {
+					alert("Esa palabra ya está añadida.")
 				}
 			}
 			else {
-				alert("Esa palabra ya existe")
+				alert("No caben más palabras.")
 			}
+		} else {
+			alert("Esa palabra no existe.")
 		}
-		else {
-			alert("No caben más palabras")
-		}
+
 	}
 
 	//Deshacer una letra escrita
 	function limpiarLetra(letra, evento) {
-		let textoLetraBorrada 
-		if (evento == "deshacer"){
+		let textoLetraBorrada
+		if (evento == "deshacer") {
 			textoLetraBorrada = letra.children()
 		}
-		else if (evento == "confirmar"){
+		else if (evento == "confirmar") {
 			textoLetraBorrada = letra.children().css("color", "black")
 		}
 		if (letrasEscritas > 0) {
-			let letraBorrada = $("#letras > #" + letra.attr("id"))		
+			let letraBorrada = $("#letras > #" + letra.attr("id"))
 			//Recuperar la letra
 			letraBorrada.append(textoLetraBorrada)
 			letraBorrada.css("opacity", "1")
@@ -317,8 +321,8 @@ $(document).ready(function () {
 	}
 	//Evento de tecla que espera recibir una letra de las mostradas, la tecla Retroceso o la tecla Entrar
 	function eventoEscribirPalabras(estado) {
-		if (estado){
-			$(document).keydown(function (event) {
+		if (estado) {
+			$(document).keydown(function(event) {
 				let teclaIntroducida = event.key
 				//Si se pulsa la tecla Retroceso se deshace la última letra escrita, volviendo a su posición original
 				if (teclaIntroducida == "Backspace") {
@@ -374,7 +378,7 @@ $(document).ready(function () {
 			let letra = alfabeto[Math.floor(Math.random() * 22)]
 			listaLetras.push(letra)
 		}
-		$(".letra").each(function (i) {
+		$(".letra").each(function(i) {
 			$(this).children().html(listaLetras[i])
 		})
 	}

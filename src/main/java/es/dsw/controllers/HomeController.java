@@ -21,7 +21,7 @@ import es.dsw.services.UsuarioService;
 
 //Controladora que se encarga de procesar las peticiones asíncronas desde Javascript
 @RestController
-public class OptionsController {
+public class HomeController {
 	
 	// METODOS USUARIO
 	
