@@ -1,8 +1,7 @@
 package es.dsw.controllers;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-
 import es.dsw.SecurityConfiguration;
 import es.dsw.models.Partida;
 import es.dsw.models.Usuario;
@@ -31,6 +29,17 @@ public class IndexController {
 	private UsuarioService servicioUsuarios;
 	@Autowired
 	private PartidaService partidaService;
+
+	// Almacenar códigos existentes de partidas que aún no se han iniciado
+	public Set<Integer> codigosPartida() {
+		Set<Integer> codigos = new HashSet<>();
+		for (Partida partida : partidaService.getAll()) {
+			if (partida.getEstado().equals("creada")) {
+				codigos.add(partida.getCodPrivada());
+			}
+		}
+		return codigos;
+	}
 
 	// Método que devuelve la vista de inicio de sesión y registro
 	@GetMapping(value = { "/", "/index" })
@@ -49,6 +58,7 @@ public class IndexController {
 				break;
 			}
 		}
+		model.addAttribute("codigos", codigosPartida());
 		return "home";
 	}
 
@@ -86,56 +96,5 @@ public class IndexController {
 		SecurityConfiguration.inMemory.createUser(
 				User.withDefaultPasswordEncoder().username(nombreUsuario).password(contra).roles("jugador").build());
 		return "redirect:/index";
-	}
-
-	// Vista de la partida
-	@GetMapping(value = "/game")
-	public String juego(@RequestParam(name = "code", defaultValue = "0") int codigo,
-						@RequestParam(name = "idUser", defaultValue = "0") int idUsuario,	
-						Model model) {
-		Partida partida = new Partida();
-		String mensaje = "La partida no existe";
-		// Unirse a partida privada
-		if (codigo != 0) {
-			for (Partida e : partidaService.getAll()) {
-				if (e.getEstado().equals("creada") && e.getCodPrivada() == codigo) {
-					partida = e;
-					mensaje="";
-					break;
-				} 
-			}
-			if (!mensaje.equals("")){
-				return "redirect:/home";
-			}
-		// Unirse a partida publica	
-		} else {
-			for (Partida e : partidaService.getAll()) {
-				if (e.getEstado().equals("creada") && e.getCodPrivada() == 0) {
-					partida = e;
-					mensaje="";
-					break;
-				} 
-			}
-			if (!mensaje.equals("")){
-				partidaService.addGame(partida);
-			}
-		}
-		// Asociar la partida con el usuario
-		Usuario usuario = servicioUsuarios.getUser(idUsuario).orElse(null);		
-		usuario.setPartidaActual(partida,0);
-		servicioUsuarios.addUser(usuario);
-		
-		ArrayList<Usuario> jugadores = new ArrayList<Usuario>();
-		for (Usuario jugador : servicioUsuarios.getAll()) {
-			for (Entry<Partida, Integer> entry : jugador.getPuntosPorPartida().entrySet()) {
-			    Partida objPartida = entry.getKey();
-			    if (objPartida.getCodPrivada() == codigo) {
-			    	jugadores.add(jugador);
-			    }
-			}
-		}
-			
-		model.addAttribute("jugadores", jugadores);
-		return "juego";
 	}
 }

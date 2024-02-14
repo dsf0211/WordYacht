@@ -18,7 +18,7 @@ body{
 	height: max-content;
 	padding-left: 1vh;
 	padding-right: 1vh;
-	justify-content: space-between;
+	justify-content: center;
 }
 
 #fila2{
@@ -34,7 +34,6 @@ body{
 /*Avatar del jugador*/
 .avatar{
 	aspect-ratio: 1/1;
-	background-image: url(../img/1.png);
 	background-size: contain;
 	height: 18vh;
 	border-radius: 50%;

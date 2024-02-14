@@ -10,12 +10,15 @@
 	<script th:src="@{js/jquery-3.6.1.min.js}"></script>
 	<script th:src="@{bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
 	<script th:src="@{js/home.js}"></script>
+	<script th:inline="javascript">
+    	let codigos = /*[[${codigos}]]*/ ''
+    	let idUser = /*[[${usuario.idUsuario}]]*/ ''
+    </script>
 	<meta name="_csrf" th:content="${_csrf.token}">
 	<meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
 
 <body>
-	<span id="idUsuario" th:text="${usuario.idUsuario}" hidden></span>
 	<div class="admin">
 		<div><a type="button" id="gestionarPalabras" data-toggle="modal" data-target="#modalGestionarPalabras"
 				sec:authorize="hasRole('admin')">Gestionar palabras</a></div>
@@ -33,7 +36,7 @@
 			Jugar</a>
 		<a type="button" class="boton bm" href="#" data-toggle="modal" data-target="#modalPrivada" id="privada">Partida
 			privada</a>
-		<a type="button" class="boton bl" th:href="@{/game?code=0&idUser={id}(id=${usuario.idUsuario})}" id="jugar">Jugar</a>
+		<a type="button" class="boton bl" th:href="@{/joinPublic?idUser={id}(id=${usuario.idUsuario})}" id="jugar">Jugar</a>
 	</div>
 	</div>
 
@@ -85,17 +88,16 @@
 					<div class="col">
 						<fieldset class="border p-3 col">
 							<legend class="w-auto">Crear partida</legend>
-							<a id="crearPrivada" class="btn btn-primary mb-2 col-sm" type="button">Obtener código</a>
-							<h2 id="codigo" class="col-sm text-center"></h2>
+							<a th:href="@{/createPrivate?idUser={id}(id=${usuario.idUsuario})}" class="btn btn-primary mb-2 col-sm" type="button">Unirse</a>
 							<label class="col-sm text-center"></label>
 						</fieldset>
 					</div>
 					<div class="col">
 						<fieldset class="border p-3 col">
 							<legend class="w-auto">Unirse a partida</legend>
-							<input class="form-control mb-2 col-sm text-center" placeholder="Introducir código">
+							<input id="codigo" class="form-control mb-2 col-sm text-center" placeholder="Introducir código">
 							<a id="unirsePrivada" class="btn btn-primary mb-2 col-sm" type="button">Unirse</a>
-							<label class="col-sm text-center">El código no existe</label>
+							<label id="errorCodigo" class="col-sm text-center"></label>
 						</fieldset>
 					</div>
 				</div>

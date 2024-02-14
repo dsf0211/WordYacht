@@ -13,7 +13,6 @@
 </head>
 
 <body>
-	<p th:each="jugador : ${jugadores}" th:text="${jugador.nombreUsuario}"></p>
 	<div class="modal" id="resultados">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content bg-dark text-light">
@@ -29,25 +28,10 @@
 		</div>
 	</div>
 	<div class="fila" id="fila1">
-		<div class="perfil">
-			<div class="avatar"></div>
-			<div class="nombreJugador" id="j1">NombreJugador</div>
-			<div class="puntosJugador" id="puntosJ1">0</div>
-		</div>
-		<div class="perfil">
-			<div class="avatar"></div>
-			<div class="nombreJugador" id="j1">NombreJugador</div>
-			<div class="puntosJugador" id="puntosJ1">0</div>
-		</div>
-		<div class="perfil">
-			<div class="avatar"></div>
-			<div class="nombreJugador" id="j1">NombreJugador</div>
-			<div class="puntosJugador" id="puntosJ1">0</div>
-		</div>
-		<div class="perfil">
-			<div class="avatar"></div>
-			<div class="nombreJugador" id="j1">NombreJugador</div>
-			<div class="puntosJugador" id="puntosJ1">0</div>
+		<div class="perfil" th:each="jugador : ${jugadores}">
+			<div class="avatar" th:style="'background-image:url('+@{/img/{imagen}(imagen=${jugador.avatar})}+'.png)'"></div>
+			<div class="nombreJugador" th:text="${jugador.nombreUsuario}">NombreJugador</div>
+			<div>0</div>
 		</div>
 	</div>
 	<div class="fila" id="fila2">

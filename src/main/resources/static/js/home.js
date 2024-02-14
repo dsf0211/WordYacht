@@ -32,7 +32,6 @@ $(document).ready(function() {
 		let header = $("meta[name='_csrf_header']").attr("content");
 		let split = $("#avatar").css("background-image").split("/")
 		let avatar = parseInt(split[split.length - 1][0]);
-		let idUser = parseInt($("#idUsuario").html());
 		$.ajax({
 			url: "/modAvatar",
 			method: "POST",
@@ -211,44 +210,21 @@ $(document).ready(function() {
 			});
 		}
 	});
-	// VENTANA PARTIDA PRIVADA
-	// Crear partida
-	let idUser = parseInt($("#idUsuario").html());
-	$("body").on("click", "#crearPrivada", function() {
-		if($('#crearPrivada').html() == "Obtener código"){
-				$.ajax({
-				url: "/createPrivate",
-				method: "GET",
-				data: { idUsuario: idUser },
-				success: function(data) {
-					$('#codigo').html(data.codPrivada);
-					$('#crearPrivada').html("Iniciar partida");
-					$('#crearPrivada').attr('href', '/game?code='+data.codPrivada+'&idUser='+idUser);										
-				},
-				error: function() {
-					alert("Error Fatal")
-				}
-			})
+	
+	//Validar código introducido para unirse a partida privada
+	$("body").on("input", "#codigo", function() {
+		let codigo = parseInt($("#codigo").val())
+		if (codigos.includes(codigo)){
+			alert("")
+			$("#unirsePrivada").attr("href","/joinPrivate?code="+codigo+"&idUser="+idUser)
+			$("#errorCodigo").html("")
+		} else {
+			$("#errorCodigo").html("El código no existe")
+			$("#unirsePrivada").attr("href","#")
 		}
-		
-	});
-
-
-	// Unirse a partida	
-	$("body").on("click", "#unirsePrivada", function() {
-		let token = $("meta[name='_csrf']").attr("content");
-		let header = $("meta[name='_csrf_header']").attr("content");
-		$.ajax({
-			url: "/joinPrivate",
-			method: "POST",
-			data: { idUsuario: idUser, codigo: codigo },
-			beforeSend: request => request.setRequestHeader(header, token),
-			success: function(data) {
-			},
-			error: function() {
-				alert("Error Fatal")
-			}
-		})
-	});
+	})
+	$("body").on("blur", "#codigo", function() {
+		$("#errorCodigo").html("")
+	})
 });
 

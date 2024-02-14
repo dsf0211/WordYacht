@@ -1,22 +1,15 @@
 package es.dsw.controllers;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import es.dsw.models.Palabra;
-import es.dsw.models.Partida;
 import es.dsw.models.Usuario;
 import es.dsw.services.PalabraService;
-import es.dsw.services.PartidaService;
 import es.dsw.services.UsuarioService;
 
 //Controladora que se encarga de procesar las peticiones asíncronas desde Javascript
@@ -100,31 +93,4 @@ public class HomeController {
         }
 		return "Número de palabras eliminadas: " + eliminadas;
 	}
-	
-	// METODOS PARTIDA
-	// Método para crear partida privada
-	@Autowired 
-	private PartidaService partidaService;	
-	@GetMapping(value = "/createPrivate")
-	public Partida CrearpartidaPrivada(@RequestParam(name = "idUsuario") int idUsuario){
-        Partida partida = new Partida();
-        // Almacenar códigos existentes de partidas no finalizadas
-		Set<Integer> codigos = new HashSet<>();	
-		for (Partida e:partidaService.getAll() ) {
-			if(!e.getEstado().equals("finalizada")) {
-				codigos.add(partida.getCodPrivada());
-			}            
-		}
-		// Generar codigo y asignarlo a la partida
-		int codigo = new Random().nextInt(1000, 9999);		
-		while (codigos.contains(codigo)) {
-			codigo = new Random().nextInt(1000, 9999);
-		}		
-		partida.setCodPrivada(codigo);
-		// Insertar la partida en la base de datos
-		partidaService.addGame(partida);
-		
-		return partida;			
-	}
-	
 }
