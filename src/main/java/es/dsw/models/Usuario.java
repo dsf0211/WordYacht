@@ -1,8 +1,8 @@
 package es.dsw.models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -39,42 +39,61 @@ public class Usuario {
 	private int acumulado;
 	@Column(name = "avatar")
 	private int avatar;
-    @Column(name ="id_rol_us", insertable = false)
-    private int idRol;
-    
-    @ManyToOne
-    @JoinColumn(name = "id_rol_us", insertable = false, updatable = false)
-    private Rol rol;
+	@Column(name = "id_rol_us", insertable = false)
+	private int idRol;
 
-    @ElementCollection
-    @CollectionTable(name = "usuario_partida",
-        joinColumns = {@JoinColumn(name = "id_usuario_up", referencedColumnName = "id_usuario")})
-    @MapKeyJoinColumn(name = "id_partida_up")
-    @Column(name = "puntos")
-    private Map<Partida, Integer> partidas = new HashMap<>();
-    
-    @Transient
-    private ArrayList<String> palabras = new ArrayList<String>();
-    
-    @Transient
-    private ArrayList<String> categorias = new ArrayList<String>();    
-    
-	public Usuario() {
-		
-	}
+	@ManyToOne
+	@JoinColumn(name = "id_rol_us", insertable = false, updatable = false)
+	private Rol rol;
+
+	@ElementCollection
+	@CollectionTable(name = "usuario_partida", joinColumns = {
+			@JoinColumn(name = "id_usuario_up", referencedColumnName = "id_usuario") })
+	@MapKeyJoinColumn(name = "id_partida_up")
+	@Column(name = "puntos")
+	private Map<Partida, Integer> partidas = new HashMap<>();
+
+	@Transient
+	private String[] palabras;
+	@Transient
+	private String categoria;	
+	@Transient
+	private int puntos;
 	
+	public Usuario() {
+
+	}
+
 	public Usuario(String nombreUsuario, String contra, String nombre, String apellidos, String email) {
 		this.nombreUsuario = nombreUsuario.equals("") ? null : nombreUsuario;
 		this.contra = contra.equals("") ? null : contra;
 		this.nombre = nombre.equals("") ? null : nombre;
-		this.apellidos = apellidos.equals("") ? null : apellidos;
-		this.email = email.equals("") ? null : email;
+		this.apellidos = apellidos;
+		this.email = email;
 	}
-	// Metodo que asocia una partida a un usuario o modifica los puntos del usuario en la partida
-	public void setPartidaActual(Partida partida, int puntos) {
-	    this.partidas.put(partida, puntos);
-	} 
-	
+
+	// Metodo para unirse a una partida
+	public void asociarAPartida(Partida partida) {
+		this.partidas.put(partida, 0);
+	}
+
+	// Metodo que modifica los puntos del usuario en una partida
+	public void actualizarPuntos(Partida partida, int puntos) {
+		this.partidas.put(partida, puntos);
+	}
+
+	public int getPuntos() {
+		return puntos;
+	}
+
+	public void setPuntos(int puntos) {
+		this.puntos = puntos;
+	}
+
+	public void setIdRol(int idRol) {
+		this.idRol = idRol;
+	}
+
 	public int getIdRol() {
 		return idRol;
 	}
@@ -159,29 +178,28 @@ public class Usuario {
 		this.email = email;
 	}
 
-	public Map<Partida, Integer> getPuntosPorPartida() {
+	public Map<Partida, Integer> getPartidas() {
 		return partidas;
 	}
 
-	public void setPuntosPorPartida(Map<Partida, Integer> puntosPorPartida) {
-		this.partidas = puntosPorPartida;
+	public void setPartidas(Map<Partida, Integer> partidas) {
+		this.partidas = partidas;
 	}
 
-	public ArrayList<String> getPalabras() {
+	public String[] getPalabras() {
 		return palabras;
 	}
 
-	public void setPalabras(ArrayList<String> palabras) {
+	public void setPalabras(String[] palabras) {
 		this.palabras = palabras;
 	}
 
-	public ArrayList<String> getCategorias() {
-		return categorias;
+	public String getCategoria() {
+		return categoria;
 	}
 
-	public void setCategorias(ArrayList<String> categorias) {
-		this.categorias = categorias;
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
 	}
-	
+
 }
-

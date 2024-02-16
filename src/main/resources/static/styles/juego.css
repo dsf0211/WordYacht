@@ -9,6 +9,11 @@ body{
 	color: white;
 }
 
+/*Cada una de las ventanas modales*/
+.modal *{
+	font-size: 2.7vh;
+}
+
 /*Cada una de las filas*/
 .fila{
 	display: flex;	
@@ -29,6 +34,7 @@ body{
 /*Cada uno de los contenedores donde se muestra el avatar y el nombre del jugador*/
 .perfil{
 	height: max-content;
+	margin-left: 1%;
 }
 
 /*Avatar del jugador*/

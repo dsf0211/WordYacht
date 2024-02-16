@@ -1,7 +1,9 @@
 package es.dsw.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import es.dsw.models.Partida;
 import es.dsw.models.Usuario;
 import es.dsw.services.PartidaService;
@@ -23,20 +26,19 @@ public class GameController {
 	private UsuarioService servicioUsuarios;
 	private Partida partida;
 
-	// Asociar la partida con el usuario
-	public void asociarUsuarioPartida(int idUsuario, Partida partida) {
-		Usuario usuario = servicioUsuarios.getUser(idUsuario).orElse(null);
-		usuario.setPartidaActual(partida, 0);
-		servicioUsuarios.addUser(usuario);
+	// Unir el usuario a la partida
+	public void unirseAPartida(Usuario jugador, Partida partida) {
+		jugador.asociarAPartida(partida);
+		servicioUsuarios.addUser(jugador);
 	}
 
 	// Obtener todos los jugadores asociados a la partida
-	public ArrayList<Usuario> jugadoresPartida(int codigo) {
+	public ArrayList<Usuario> jugadoresPartida(int idPartida) {
 		ArrayList<Usuario> jugadores = new ArrayList<Usuario>();
 		for (Usuario jugador : servicioUsuarios.getAll()) {
-			for (Entry<Partida, Integer> entry : jugador.getPuntosPorPartida().entrySet()) {
+			for (Entry<Partida, Integer> entry : jugador.getPartidas().entrySet()) {
 				Partida objPartida = entry.getKey();
-				if (objPartida.getCodPrivada() == codigo) {
+				if (objPartida.getIdPartida() == idPartida) {
 					jugadores.add(jugador);
 				}
 			}
@@ -70,6 +72,7 @@ public class GameController {
 	@GetMapping(value = "/joinPrivate")
 	public String partidaPrivada(@RequestParam(name = "code") int codigo,
 								 @RequestParam(name = "idUser") int idUsuario,
+								 @RequestParam(name = "guest", defaultValue = "false") boolean invitado,
 								 Model model) {
 		// Buscar partida privada según el código
 		for (Partida e : partidaService.getAll()) {
@@ -78,8 +81,13 @@ public class GameController {
 				break;
 			}
 		}
-		asociarUsuarioPartida(idUsuario, partida);
-		model.addAttribute("jugadores", jugadoresPartida(codigo));
+		Usuario usuario = servicioUsuarios.getUser(idUsuario).get();
+		unirseAPartida(usuario, partida);
+		model.addAttribute("jugadores", jugadoresPartida(partida.getIdPartida()));
+		model.addAttribute("idPartida", partida.getIdPartida());
+		model.addAttribute("codPartida", partida.getCodPrivada());
+		model.addAttribute("jugador", usuario);
+		model.addAttribute("invitado", invitado);
 		return "juego";
 	}
 
@@ -89,7 +97,7 @@ public class GameController {
 			Model model) {
 		partida = new Partida();
 		boolean existe = false;
-		// Buscar partida privada según el código
+		// Buscar partida pública según el código
 		for (Partida e : partidaService.getAll()) {
 			if (e.getEstado().equals("creada") && e.getCodPrivada() == 0) {
 				partida = e;
@@ -99,9 +107,13 @@ public class GameController {
 		}
 		if (!existe) {
 			partidaService.addGame(partida);
-		}
-		asociarUsuarioPartida(idUsuario, partida);
-		model.addAttribute("jugadores", jugadoresPartida(0));
+		}		
+		Usuario usuario = servicioUsuarios.getUser(idUsuario).get();
+		unirseAPartida(usuario, partida);
+		model.addAttribute("jugadores", jugadoresPartida(partida.getIdPartida()));
+		model.addAttribute("idPartida", partida.getIdPartida());
+		model.addAttribute("codPartida", partida.getCodPrivada());
+		model.addAttribute("jugador", usuario);
 		return "juego";
 	}
 }

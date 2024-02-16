@@ -1,44 +1,165 @@
-$(document).ready(function() {
-	tiempoRestante("#tiempo")
+$(document).ready(function() {	
+	let stompClient;
+		const socket = new SockJS("/websocket-example");
+		stompClient = Stomp.over(socket);
+			
+		//Conectarse a la partida
+		stompClient.connect({}, function () {
+			//Los demás jugadores notan tu entrada en la partida y puedes ver cada jugador que se une en tiempo real
+			stompClient.send("/app/join", {}, jugador.idUsuario+","+idPartida+","+jugador.avatar+","+jugador.nombreUsuario);
+			//Recibir datos del jugador conectado
+		    stompClient.subscribe("/topic/player", function (respuesta) {
+				let datosJugadorConectado = respuesta.body.split(",")
+				let idJugadorConectado = datosJugadorConectado[0]
+		    	let idPartidaJugadorConectado = datosJugadorConectado[1]
+		    	let avatarJugadorConectado = datosJugadorConectado[2]
+		    	let nombreJugadorConectado = datosJugadorConectado[3]
+		    	
+		    	//Añadir el perfil del jugador que acaba de entrar en la partida
+		    	if (idPartidaJugadorConectado == idPartida && idJugadorConectado != jugador.idUsuario){
+					let fila1 = $("#fila1")
+					let perfil = $("<div>").prop("class","perfil")
+					let avatar = $("<div>").prop("class","avatar").css("background-image","url(../img/"+avatarJugadorConectado+".png)")
+					let nombre = $("<div>").prop("class","nombreJugador").html(nombreJugadorConectado)
+					let puntuacion = $("<div>").html("0")
+					fila1.append(perfil.append(avatar,nombre,puntuacion))
+				}
+		    })
+		});
+	//Mostrar ventana de inicio de partida
+	$("#iniciarPartida").modal("show")					
+	//Empezar el juego por el anfitrión
+	$("body").on("click", "#empezar", function() {
+		$(this).prop("hidden", "hidden")
+		empezarTurno()
+	})
 
-	function tiempoRestante(id) {
-		if (id == "#tiempo") {
+	//Cuenta atrás para empezar el juego
+	function empezarTurno() {
+		$("#botones").prop("hidden", "hidden");
+		eventosElegirPuntuacion(false)
+		$(".puntuacion").each(function() {
+			if ($(this).css("color") == "rgb(255, 0, 0)") {
+				$(this).css({ "color": "blue", "cursor": "auto" }).prop("class", "")
+			}
+		})
+		limpiarLetras("deshacer")
+		limpiarPalabras()
+		limpiarPostit()
+		//Se acaba el juego y se muestran los resultados y el ganador de la partida
+		if (turnos == 8) {
+			$("#resultados .modal-title").html("Resultados de la partida")
+			$.ajax({
+				url: "/endGame", method: "POST", data: { puntosPartida: puntosPartida, idPartida: partida.idPartida, userID: jugador.idUsuario}, beforeSend: request => request.setRequestHeader(header, token),
+				success: function(jugadores) {
+					let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Usuario</th><th>Puntuación</th></tr>";
+					for (let jugador of jugadores) {
+						let fila = "<tr><td>" + jugador.nombreUsuario + "</td><td>" + jugador.puntos + "</td>"
+						tabla += fila
+					}
+					tabla += "</table>"
+					$("#resultados .modal-body").html(tabla)
+				},
+				error: function() {
+					alert("Error Fatal")
+				}
+			})
+			$("#resultados").modal("show")
+		}
+		else {
+			generarLetras()
+			$(".letra").prop("hidden", "");
+			$("#letras2").prop("hidden", "");
+			$("#tiempo").html("1")
+			$("#mensaje").prop("hidden", "")
 			intervalo = setInterval(function() {
 				$("#tiempo").html(parseInt($("#tiempo").html()) - 1)
 				if ($("#tiempo").html() == "0") {
 					clearInterval(intervalo);
-					$("#mensaje").remove()
+					$("#mensaje").prop("hidden", "hidden")
 					empezarJuego()
 				}
-			}, 1000)
-		} else if (id == "#tiempo2") {
-			intervalo = setInterval(function() {
-				$("#tiempo2").html(parseInt($("#tiempo2").html()) - 1)
-				if ($("#tiempo2").html() == "0") {
-					clearInterval(intervalo);
-					eventosElegirPuntuacion(true)
-					eventoEscribirPalabras(false)
-					eventoEnviar(false)
-					eventoLimpiar(false)
-					tiempoRestante(null)
-				}
-			}, 1000)
-		} else {
-			intervalo = setInterval(function() {
-				$("#tiempo2").html(parseInt($("#tiempo2").html()) + 1)
-				if ($("#tiempo2").html() == "3") {
-					clearInterval(intervalo)
-					$("#resultados").modal("show")
-					setTimeout(function(){
-						$("#resultados").modal("hide")
-					},5000)
-				}
-			}, 1000)
+			}, 500)
 		}
+
+	}
+
+	//Tiempo restante del turno actual
+	function tiempoRestante() {
+		$("#tiempo2").html("1")
+		intervalo = setInterval(function() {
+			$("#tiempo2").html(parseInt($("#tiempo2").html()) - 1)
+			//Se acaba el tiempo
+			if ($("#tiempo2").html() == "0") {
+				clearInterval(intervalo);
+				eventosElegirPuntuacion(true)
+				eventoEscribirPalabras(false)
+				eventoEnviar(false)
+				eventoLimpiar(false)
+				//Se da un tiempo a los jugadores para elegir su puntuación
+				setTimeout(function() {
+					$("#resultados").modal("show")
+					//Se calculan los resultados de la ronda
+					let puntosTurno = parseInt($("#total").html())
+					let categoria;
+					let palabras = []
+					$(".puntuacion").each(function() {
+						if ($(this).css("color") == "rgb(255, 0, 0)") {
+							categoria = $(this).parent().children().html()
+						}
+					})
+					$("#tablaPalabras td").each(function() {
+						if ($(this).html() != "") {
+							palabras.push($(this).html())
+						}
+					})
+					palabras = palabras.join(",")
+					//Se muestran los resultados de la ronda que acaba de terminar
+					if (categoria == null) {
+						let puntuaciones = []
+						$(".puntuacion").each(function() {
+							puntuaciones.push(parseInt($(this).html()))
+						})
+						puntosTurno = Math.max(...puntuaciones)
+						$(".puntuacion").each(function() {
+							if (parseInt($(this).html()) == puntosTurno) {
+								$(this).css("color", "red")
+								categoria = $(this).parent().children().html()
+								return false
+							}
+						})
+					}
+					puntosPartida += puntosTurno
+					$.ajax({
+						url: "/results", method: "POST", data: { userID: jugador.idUsuario, puntosTurno: puntosTurno, categoria: categoria, palabras: palabras }, beforeSend: request => request.setRequestHeader(header, token),
+						success: function(jugadores) {
+							let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Usuario</th><th>Categoría</th><th>Puntuación</th><th>Palabras</th></tr>";
+							for (let jugador of jugadores) {
+								let fila = "<tr><td>" + jugador.nombreUsuario + "</td><td>" + jugador.categoria + "</td><td>" + jugador.puntos + "</td><td>" + jugador.palabras + "</td></tr>"
+								tabla += fila
+							}
+							tabla += "</table>"
+
+							$("#resultados .modal-body").html(tabla)
+						},
+						error: function() {
+							alert("Error Fatal")
+						}
+					})
+					//Empieza la siguiente ronda después de un tiempo
+					setTimeout(function() {
+						turnos++
+						$("#resultados").modal("hide")
+						empezarTurno()
+					}, 500)
+				}, 500)
+			}
+		}, 500)
 	}
 
 	let palabrasDiccionario = []
 
+	//Se cargan todas las palabras del diccionario
 	$.ajax({
 		url: "/showWords",
 		method: "GET",
@@ -55,18 +176,29 @@ $(document).ready(function() {
 
 	let letrasEscritas = 0
 
+	function limpiarPalabras() {
+		$("#tablaPalabras td").each(function() {
+			if ($(this).html() != "") {
+				$(this).html("")
+			}
+		})
+	}
+
+	function limpiarPostit() {
+		$("#postit > table td").html("0")
+		$("#postit #inicial").html("")
+	}
+
 	//Empieza el turno
 	function empezarJuego() {
-		generarLetras()
-		$(".letra").prop("hidden", "");
-		$("#letras2").prop("hidden", "");
 		$("#botones").prop("hidden", "");
 		eventoEscribirPalabras(true)
 		eventoEnviar(true)
 		eventoLimpiar(true)
-		tiempoRestante("#tiempo2")
+		tiempoRestante()
 	}
 
+	//Se activan o desactivan los eventos de elegir la puntuación
 	function eventosElegirPuntuacion(estado) {
 		if (!estado) {
 			$("body").off("click", ".puntuacion")
@@ -75,15 +207,15 @@ $(document).ready(function() {
 		}
 		else {
 			$("body").on("mouseover", ".puntuacion", function() {
-				$(this).css({ "font-size": "1.8vh", "cursor": "pointer" })
+				$(this).css({ "color": "red", "cursor": "pointer" })
 			})
 			$("body").on("mouseout", ".puntuacion", function() {
-				$(this).css({ "font-size": "1.7vh", "cursor": "auto" })
+				$(this).css({ "color": "white", "cursor": "auto" })
 			})
 			$("body").on("click", ".puntuacion", function() {
 				let puntuacionElegida = $(this).html()
 				$("#total").html(puntuacionElegida).css("color", "red")
-				$(this).css({ "font-weight": "bold", "color": "red", "cursor": "auto" })
+				$(this).css({ "cursor": "auto" })
 				eventosElegirPuntuacion(false)
 			})
 		}
@@ -123,6 +255,10 @@ $(document).ready(function() {
 	}
 
 	//Declaracion de variables
+	let token = $("meta[name='_csrf']").attr("content");
+	let header = $("meta[name='_csrf_header']").attr("content");
+	let turnos = 0
+	let puntosPartida = 0
 	let idPalabra = 1
 	let palabrasFormadas = []
 	let palabras3 = []
@@ -380,6 +516,7 @@ $(document).ready(function() {
 		}
 		$(".letra").each(function(i) {
 			$(this).children().html(listaLetras[i])
+			$(this).children().css("color", "red")
 		})
 	}
 })

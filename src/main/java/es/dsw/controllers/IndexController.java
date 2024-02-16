@@ -30,11 +30,11 @@ public class IndexController {
 	@Autowired
 	private PartidaService partidaService;
 
-	// Almacenar códigos existentes de partidas que aún no se han iniciado
-	public Set<Integer> codigosPartida() {
+	// Almacenar códigos existentes de partidas privadas que aún no se han iniciado
+	public Set<Integer> codigosPartidasPrivadas() {
 		Set<Integer> codigos = new HashSet<>();
 		for (Partida partida : partidaService.getAll()) {
-			if (partida.getEstado().equals("creada")) {
+			if (partida.getEstado().equals("creada") && partida.getCodPrivada() != 0) {
 				codigos.add(partida.getCodPrivada());
 			}
 		}
@@ -50,15 +50,15 @@ public class IndexController {
 	// Método que devuelve la vista del menú principal
 	@GetMapping(value = "/home")
 	public String home(Model model, Authentication authentication) {
-		Usuario usuario = new Usuario();
-		for (Usuario e : servicioUsuarios.getAll()) {
-			if (e.getNombreUsuario().equals(authentication.getName())) {
-				usuario = e;
-				model.addAttribute("usuario", usuario);
-				break;
+			Usuario usuario = new Usuario();
+			for (Usuario e : servicioUsuarios.getAll()) {
+				if (e.getNombreUsuario().equals(authentication.getName())) {
+					usuario = e;
+					break;
+				}
 			}
-		}
-		model.addAttribute("codigos", codigosPartida());
+			model.addAttribute("codigos", codigosPartidasPrivadas());
+			model.addAttribute("usuario", usuario);
 		return "home";
 	}
 

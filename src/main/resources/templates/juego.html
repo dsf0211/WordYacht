@@ -10,14 +10,43 @@
 	<script th:src="@{js/jquery-3.6.1.min.js}"></script>
 	<script th:src="@{bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
 	<script th:src="@{js/juego.js}"></script>
+	<meta name="_csrf" th:content="${_csrf.token}">
+	<meta name="_csrf_header" th:content="${_csrf.headerName}">
+	<script th:inline="javascript">
+    	let jugador = /*[[${jugador}]]*/ ''
+    	let jugadores = /*[[${jugadores}]]*/ ''
+    	let idPartida = /*[[${idPartida}]]*/ ''
+    </script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js}"></script>
 </head>
 
-<body>
-	<div class="modal" id="resultados">
-		<div class="modal-dialog modal-dialog-centered">
+<body>   
+	<div class="modal" id="iniciarPartida" data-backdrop="static" th:if="${!invitado}">
+		<div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: max-content;">
 			<div class="modal-content bg-dark text-light">
 				<div class="modal-header">
-					<h4 class="modal-title">Resultados de la partida</h4>
+					<h4 class="modal-title">Iniciar partida</h4>
+				</div>
+				<div class="modal-body row">
+					<div class="col">
+						<fieldset class="border p-3 col">
+							<legend class="w-auto">Código de partida</legend>
+							<h2 id="codigo" class="col-sm text-center" th:text="${codPartida}"></h2>
+						</fieldset>
+					</div>
+					<div class="col d-flex align-items-center">
+						<button type="button" class="btn btn-primary mb-2 col-sm" id="empezar" data-dismiss="modal">Iniciar partida</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal" id="resultados">
+		<div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: max-content;">
+			<div class="modal-content bg-dark text-light">
+				<div class="modal-header">
+					<h4 class="modal-title">Resultados del turno</h4>
 				</div>
 				<div class="modal-body row">
 				</div>
@@ -59,7 +88,7 @@
 					<a id="btnLimpiar" type="button" class="btn btn-warning">Limpiar</a>
 					<a id="btnEnviar" type="button" class="btn btn-primary">Enviar</a>
 				</div>
-				<div id="cuentaAtras">TIEMPO: <span id="tiempo2">1</span></div>
+				<div id="cuentaAtras">TIEMPO: <span id="tiempo2">10</span></div>
 			</div>
 			<div id="pie">
 				<a id="btnAbandonar" type="button" class="btn btn-danger" th:href="@{/home}">Abandonar</a>
@@ -70,7 +99,7 @@
 						<tr id="cincoletras"><th>5 letras</th><td>0</td></tr>
 						<tr id="seisletras"><th>6 letras</th><td>0</td></tr>
 						<tr id="massieteletras"><th>+7 letras</th><td>0</td></tr>
-						<tr><th>Mejor inicial: <span id="inicial">S</span></th><td id="ocurrenciasInicial">0</td></tr>
+						<tr><th>Mejor inicial: <span id="inicial"></span></th><td id="ocurrenciasInicial">0</td></tr>
 						<tr></tr>
 					</table>
 				</div>

@@ -1,9 +1,16 @@
 $(document).ready(function() {
 	// VENTANA VER ESTADISTICAS	
-	// Funcion para mostrar estadisticas
 	$("body").on("click", "#estadisticas", function() {
+		mostrarRanking();
+	})	
+	// Mostrar ranking
+	$("body").on("click", "#verRanking", function() {
+		mostrarRanking();
+		$("#verRanking, #verHistorial").toggleClass("btn-secondary btn-primary");
+	})
+	function mostrarRanking() {
 		$.ajax({
-			url: "/stats",
+			url: "/ranking",
 			method: "GET",
 			success: function(data) {
 				let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Posición</th><th>Usuario</th><th>Puntuación</th></tr>";
@@ -17,14 +24,41 @@ $(document).ready(function() {
 					tabla += fila
 				}
 				tabla += "</table>"
+				$("#tablaEstadisticas").html(tabla);
 
-				$("#tablaEstadisticas").html(tabla)
 			},
 			error: function() {
 				alert("Error Fatal")
 			}
 		})
-	})
+	}
+	// Mostrar historial de partidas
+	$("body").on("click", "#verHistorial", function() {
+		$.ajax({
+			url: "/history",
+			method: "GET",
+			data: { idUsuario: idUser },
+			success: function(data) {
+				let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Fecha</th><th>Puntuación</th><th>Nº de jugadores</th><th>Posición</th></tr>";
+				for (let i in data) {
+					let fila = "<tr>"
+					let fecha = "<td>" + data[i][0] + "</td>";
+					let puntuacion = "<td>" + data[i][1] + "</td>";
+					let numJugadores = "<td>" + data[i][2] + "</td>";
+					let posicion = "<td>" + data[i][3] + "</td>";
+					fila += fecha + puntuacion + numJugadores + posicion + "</tr>";
+					tabla += fila;
+				}
+				tabla += "</table>";
+
+				$("#verRanking, #verHistorial").toggleClass("btn-secondary btn-primary");
+				$("#tablaEstadisticas").html(tabla);
+			},
+			error: function() {
+				alert("Error Fatal");
+			}
+		});
+	});
 	// VENTANA VER PERFIL	
 	// Funcion para modificar avatar
 	$("body").on("click", "#guardarAvatar", function() {
@@ -215,8 +249,7 @@ $(document).ready(function() {
 	$("body").on("input", "#codigo", function() {
 		let codigo = parseInt($("#codigo").val())
 		if (codigos.includes(codigo)){
-			alert("")
-			$("#unirsePrivada").attr("href","/joinPrivate?code="+codigo+"&idUser="+idUser)
+			$("#unirsePrivada").attr("href","/joinPrivate?code="+codigo+"&idUser="+idUser+"&guest=true")
 			$("#errorCodigo").html("")
 		} else {
 			$("#errorCodigo").html("El código no existe")
