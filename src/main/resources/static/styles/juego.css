@@ -112,30 +112,40 @@ body{
 /*Zona donde se inicia el juego, se forman las palabras y se muestra el tiempo restante*/
 
 #cuerpo{
-	height: 55%;
+	height: 65%;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
 }
 
 #pie{
-	height: 45%;
+	height: 35%;
 }
 
 /*Contenedor del tiempo restante para empezar el turno*/
 #mensaje{
+	margin-left: 8%;
+	width: 80%;
 	font-size: 3vh;
-	background-color: greenyellow;
-	padding: 2vh;
-	border-radius: 50%;
-	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-	font-style: italic;
-	color:black
+	background-color: rgb(0, 128, 192);
+	padding: 1%;
+	border-radius: 10px;
+	border: 3px solid blue;
+	font-family: Candara, 'Times New Roman', Times, serif;
+	font-weight: bold;
+	color: black;
+	text-decoration:overline underline;
+	height: max-content;
 }
 
-/*Tiempo restante para empezar el turno*/
-#tiempo{
+/*Tiempo restante para empezar el turno y tiempo del turno*/
+#tiempo, #tiempo2{
 	color: red;
+}
+
+#tiempo2{
+	font-size: 4vh;
+	font-weight: 800;
 }
 
 /*Contenedor del tiempo restante*/

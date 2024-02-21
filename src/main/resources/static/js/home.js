@@ -2,6 +2,7 @@ $(document).ready(function() {
 	// VENTANA VER ESTADISTICAS	
 	$("body").on("click", "#estadisticas", function() {
 		mostrarRanking();
+		$("#verRanking").prop("class","btn btn-primary col-sm mb-3")
 	})	
 	// Mostrar ranking
 	$("body").on("click", "#verRanking", function() {
@@ -13,14 +14,14 @@ $(document).ready(function() {
 			url: "/ranking",
 			method: "GET",
 			success: function(data) {
-				let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Posición</th><th>Usuario</th><th>Puntuación</th></tr>";
-				for (let indice in data) {
-					let usuario = data[indice]
+				let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Posición</th><th>Usuario</th><th>Puntuación media</th></tr>";
+				for (let i = 0; i < data.length; i++) {
+					let usuario = data[i]
 					let fila = "<tr>"
-					let clasificacion = "<td>" + (parseInt(indice) + 1) + "</td>"
+					let clasificacion = "<td>" + (parseInt(i) + 1) + "</td>"
 					let username = "<td>" + usuario.nombreUsuario + "</td>"
-					let acumulado = "<td>" + usuario.acumulado + "</td>"
-					fila += clasificacion + username + acumulado + "</tr>"
+					let media = "<td>" + usuario.media + "</td>"
+					fila += clasificacion + username + media + "</tr>"
 					tabla += fila
 				}
 				tabla += "</table>"
@@ -40,7 +41,7 @@ $(document).ready(function() {
 			data: { idUsuario: idUser },
 			success: function(data) {
 				let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Fecha</th><th>Puntuación</th><th>Nº de jugadores</th><th>Posición</th></tr>";
-				for (let i in data) {
+				for (let i = 0; i < data.length; i++) {
 					let fila = "<tr>"
 					let fecha = "<td>" + data[i][0] + "</td>";
 					let puntuacion = "<td>" + data[i][1] + "</td>";
@@ -59,29 +60,32 @@ $(document).ready(function() {
 			}
 		});
 	});
-	// VENTANA VER PERFIL	
-	// Funcion para modificar avatar
+	// VENTANA VER PERFIL
+	// Modificar avatar
+	$("body").on("click", ".botonAvatar", function() {	
+		// Cambiar la imagen del avatar del usuario segun la selección
+		let avatar = this.style.getPropertyValue("background-image")
+		$("#avatarUsuario").css("background-image", avatar)
+		// Almacenar el valor id del elemento seleccionado
+		let id = $(this).attr("id");
+        $("#avatarUsuario").data("value", id);
+	})
+	// Guardar el valor del nuevo avatar en la base de datos
 	$("body").on("click", "#guardarAvatar", function() {
 		let token = $("meta[name='_csrf']").attr("content");
-		let header = $("meta[name='_csrf_header']").attr("content");
-		let split = $("#avatar").css("background-image").split("/")
-		let avatar = parseInt(split[split.length - 1][0]);
+		let header = $("meta[name='_csrf_header']").attr("content");		
+		let avatar = $("#avatarUsuario").data("value");
 		$.ajax({
 			url: "/modAvatar",
 			method: "POST",
 			data: { avatar: avatar, idUsuario: idUser },
 			beforeSend: request => request.setRequestHeader(header, token),
 			success: function() {
-
 			},
 			error: function() {
 				alert("Error Fatal")
 			}
 		})
-	})
-	$("body").on("click", ".botonAvatar", function(event) {
-		let avatar = event.target.style.getPropertyValue("background-image")
-		$("#avatar").css("background-image", avatar)
 	})
 
 	// VENTANA GESTIONAR PALABRAS	
@@ -114,7 +118,7 @@ $(document).ready(function() {
 		let token = $("meta[name='_csrf']").attr("content");
 		let header = $("meta[name='_csrf_header']").attr("content");
 		let palabra = $("#palabra").val().toUpperCase();
-
+		// Comprobar que solo se ha introducido letras
 		if (!/^[A-Za-zÑñ]+$/.test(palabra)) {
 			$('#mensajePalabras').html("Debe introducir sólo letras");
 			$('#palabra').val("");
@@ -167,7 +171,7 @@ $(document).ready(function() {
 					$("#palabra").val("");
 				},
 				beforeSend: request => request.setRequestHeader(header, token),
-				error: function() {
+				error: function() {					
 					alert("Error Fatal")
 				}
 			});
@@ -175,42 +179,66 @@ $(document).ready(function() {
 	});
 
 	// VENTANA GESTIONAR USUARIOS
-	// Funcion para crear tabla de usuarios
+	// Crear tabla de usuarios
 	function crearTablaUsuarios(data) {
-		let tabla = "<table class='table table-striped table-dark'><tr><th>Usuario</th><th>Nombre</th><th>Apellidos</th><th>E-Mail</th><th>Puntuación</th><th>Fecha de registro</th><th>Rol</th>"
+		let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Usuario</th><th>Nombre</th><th>Apellidos</th><th>E-Mail</th><th>Puntuación</th><th>Fecha de registro</th><th>Rol</th></tr>";
+		
 		for (let indice in data) {
 			let usuario = data[indice]
-			let fila = "<tr>"
-			let username = "<td>" + usuario.nombreUsuario + "</td>"
-			let nombre = "<td>" + usuario.nombre + "</td>"
-			let apellidos = "<td>" + usuario.apellidos + "</td>"
-			let email = "<td>" + usuario.email + "</td>"
-			let puntos = "<td>" + usuario.acumulado + "</td>"
-			let fecha_registro = "<td>" + usuario.fecha_registro + "</td>"
-			let rol = "<td>" + usuario.rol.nombre + "</td>"
-			fila += username + nombre + apellidos + email + puntos + fecha_registro + rol + "</tr>"
-			tabla += fila
+			let fila = "<tr>";
+			let username = "<td>" + usuario.nombreUsuario + "</td>";
+			let nombre = "<td>" + usuario.nombre + "</td>";
+			let apellidos = "<td>" + usuario.apellidos + "</td>";
+			let email = "<td>" + usuario.email + "</td>";
+			let puntos = "<td>" + usuario.acumulado + "</td>";
+			let fecha_registro = "<td>" + usuario.fecha_registro + "</td>";
+			let rol = "<td><select class='select-rol custom-select bg-dark text-light'>" +
+				"<option value='1'>Jugador</option>" +
+				"<option value='2'>Administrador</option>" +
+				"</select></td>";
+			fila += username + nombre + apellidos + email + puntos + fecha_registro + rol + "</tr>";
+			tabla += fila;
 		}
-		tabla += "</table>"
-
-		$("#tablaUsuarios").html(tabla)
-	}
+		tabla += "</table>";
+		$("#tablaUsuarios").html(tabla);
+		// Establecer el valor de id rol como valor seleccionado por defecto en el select
+		for (let usuario of data) {
+        	let selectRol = $("#tablaUsuarios").find("tr:contains(" + usuario.nombreUsuario + ")").find(".select-rol");
+        	selectRol.val(usuario.idRol);
+    	}
+	}	
 	// Peticion asincrona para mostrar la tabla de usuarios
 	$("body").on("click", "#verUsuarios", function() {
 		$.ajax({
 			url: "/showUsers",
 			method: "GET",
 			success: function(data) {
-				crearTablaUsuarios(data)
+				crearTablaUsuarios(data);
 			},
 			error: function() {
 				alert("Error Fatal")
 			}
 		})
 	})
-
+	// Modificar el rol de un usuario al cambiar el valor del select
+	$("body").on("change", ".select-rol", function() {
+		let token = $("meta[name='_csrf']").attr("content");
+		let header = $("meta[name='_csrf_header']").attr("content");
+	    let username = $(this).closest("tr").find("td:first").text();  
+	    let idRol = $(this).val();
+	    // Realizar la solicitud AJAX para cambiar el rol del usuario
+	    $.ajax({
+	        url: "/modRolUser",
+	        method: "POST",
+	        data: { username: username, idRol: idRol },
+			beforeSend: request => request.setRequestHeader(header, token),
+	        error: function() {
+	            alert("Error al modificar el rol del usuario.");
+	        }
+	    });
+	});
 	// Seleccionar las filas de la tabla
-	$("body").on("click", "#tablaUsuarios > table td", function() {
+	$("body").on("click", "#tablaUsuarios > table td:not(:has(select))", function() {
 		$(this).parent().toggleClass("seleccionada");
 	});
 	//Borrar las filas seleccionadas
@@ -228,7 +256,7 @@ $(document).ready(function() {
 			alert("No hay ningun usuario seleccionado")
 		}
 		else {
-			// Enviar petición asincrona
+			// Petición asincrona para eliminar usuarios
 			$.ajax({
 				url: "/deleteUser",
 				method: "POST",
@@ -239,25 +267,27 @@ $(document).ready(function() {
 					crearTablaUsuarios(data)
 				},
 				error: function() {
-					alert("Error Fatal")
+					alert("Error al eliminar usuario")
 				}
 			});
 		}
 	});
-	
-	//Validar código introducido para unirse a partida privada
-	$("body").on("input", "#codigo", function() {
+
+	// VENTANA PARTIDA PRIVADA
+	// Validar código introducido para unirse a partida privada
+	$("body").on("click", "#unirsePrivada", function() {
 		let codigo = parseInt($("#codigo").val())
-		if (codigos.includes(codigo)){
-			$("#unirsePrivada").attr("href","/joinPrivate?code="+codigo+"&idUser="+idUser+"&guest=true")
+		if (codigos.includes(codigo)) {
+			$("#unirsePrivada").attr("href", "/joinPrivate?code=" + codigo + "&idUser=" + idUser)
 			$("#errorCodigo").html("")
 		} else {
 			$("#errorCodigo").html("El código no existe")
-			$("#unirsePrivada").attr("href","#")
+			$("#unirsePrivada").attr("href", "#")
 		}
-	})
-	$("body").on("blur", "#codigo", function() {
+	});
+	// Limpiar input y mensaje al abrir la ventana modal
+	$("body").on("click", "#privada", function() {		
+		$("#codigo").val("");
 		$("#errorCodigo").html("")
-	})
+	});
 });
-

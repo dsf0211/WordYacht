@@ -1,8 +1,5 @@
 package es.dsw.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,34 +16,32 @@ public class GameController2 {
 	private UsuarioService servicioUsuarios;
 	@Autowired
 	private PartidaService partidaService;
-	@PostMapping(value = "/results")
-	public List<Usuario> resultadosTurno(@RequestParam(name="userID") int idUser,
-										@RequestParam(name="puntosTurno") int puntos,
-										@RequestParam(name="categoria") String categoria,
-										@RequestParam(name="palabras") String palabras
-										) {
-		ArrayList<Usuario> jugadores = new ArrayList<Usuario>();
-		Usuario user = servicioUsuarios.getUser(idUser).get();
-		user.setPuntos(puntos);
-		user.setCategoria(categoria);
-		user.setPalabras(palabras.split(","));
-		jugadores.add(user);
-		return jugadores;
+	
+	@PostMapping(value = "/startGame")
+	public void finalizarPartida(@RequestParam(name = "idPartida") int idPartida) {
+		Partida partidaActual = partidaService.getGame(idPartida).get(); 
+		partidaActual.setEstado("iniciada");
+		partidaService.addGame(partidaActual);
 	}
 	
-	@PostMapping(value = "/endGame")
-	public List<Usuario> finalizarPartida(@RequestParam(name = "puntosPartida") int puntosPartida,
-								 @RequestParam(name = "idPartida") int idPartida,
-								 @RequestParam(name="userID") int idUser) {
-		ArrayList<Usuario> jugadores = new ArrayList<Usuario>();
+	@PostMapping(value="/exitGame")
+	public void salirPartida(@RequestParam(name = "idPartida") int idPartida,
+							 @RequestParam(name = "userID") int idUser,
+							 @RequestParam(name = "finalizada") boolean finalizada,
+							 @RequestParam(name = "puntosPartida") int puntosPartida) {
+		Partida partidaActual = partidaService.getGame(idPartida).get();
 		Usuario user = servicioUsuarios.getUser(idUser).get();
-		Partida partidaActual = partidaService.getGame(idPartida).get(); 
-		user.setPuntos(puntosPartida);
-		user.actualizarPuntos(partidaActual, puntosPartida);
-		partidaActual.setEstado("finalizada");
-		jugadores.add(user);
-		servicioUsuarios.addUser(user);
-		partidaService.addGame(partidaActual);
-		return jugadores;
+		if (finalizada) {
+			//Se actualiza el estado de la partida a "finalizada"
+			partidaActual.setEstado("finalizada");
+			partidaService.addGame(partidaActual);
+			//Se actualiza la puntuacion de la partida de cada jugador
+			user.puntosPartida(partidaActual, puntosPartida);
+			servicioUsuarios.addUser(user);
+		} else {
+			//Se borra el registro que relaciona el usuario con la partida
+			user.salirDePartida(idPartida);
+			servicioUsuarios.addUser(user);
+		}
 	}
 }

@@ -16,13 +16,16 @@
     	let jugador = /*[[${jugador}]]*/ ''
     	let jugadores = /*[[${jugadores}]]*/ ''
     	let idPartida = /*[[${idPartida}]]*/ ''
+    	let anfitrion = /*[[${anfitrion}]]*/ ''
+		let tipoPartida = /*[[${tipoPartida}]]*/ ''
+		let letras = /*[[${letras}]]*/ ''
     </script>
     <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js}"></script>
     <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js}"></script>
 </head>
 
 <body>   
-	<div class="modal" id="iniciarPartida" data-backdrop="static" th:if="${!invitado}">
+	<div class="modal" id="iniciarPartida" data-backdrop="static" th:if="${anfitrion}">
 		<div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: max-content;">
 			<div class="modal-content bg-dark text-light">
 				<div class="modal-header">
@@ -36,8 +39,11 @@
 						</fieldset>
 					</div>
 					<div class="col d-flex align-items-center">
-						<button type="button" class="btn btn-primary mb-2 col-sm" id="empezar" data-dismiss="modal">Iniciar partida</button>
+						<button type="button" class="btn btn-primary mb-2 col-sm" id="empezar">Iniciar partida</button>
 					</div>
+				</div>
+				<div class="modal-footer">
+					<label class="col-sm text-center"></label>
 				</div>
 			</div>
 		</div>
@@ -51,7 +57,7 @@
 				<div class="modal-body row">
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					<a type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</a>
 				</div>
 			</div>
 		</div>
@@ -81,19 +87,20 @@
 						<div class="textoLetra">A</div>
 					</div>
 				</div>
-				<div id="mensaje">El turno empezará en <span id="tiempo">1</span></div>
+				<div id="mensaje" hidden><span></span><span id="tiempo"></span></div>
 				<div id="letras2">
 				</div>
 				<div id="botones" hidden>
 					<a id="btnLimpiar" type="button" class="btn btn-warning">Limpiar</a>
 					<a id="btnEnviar" type="button" class="btn btn-primary">Enviar</a>
 				</div>
-				<div id="cuentaAtras">TIEMPO: <span id="tiempo2">10</span></div>
+				<div id="cuentaAtras"><span id="tiempo2"></span></div>
 			</div>
 			<div id="pie">
 				<a id="btnAbandonar" type="button" class="btn btn-danger" th:href="@{/home}">Abandonar</a>
 				<div id="postit">
 					<table>
+						<tr id="numeroPalabras"><th>Nº palabras</th><td>0</td></tr>
 						<tr id="tresletras"><th>3 letras</th><td>0</td></tr>
 						<tr id="cuatroletras"><th>4 letras</th><td>0</td></tr>
 						<tr id="cincoletras"><th>5 letras</th><td>0</td></tr>

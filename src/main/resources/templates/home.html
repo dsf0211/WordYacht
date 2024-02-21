@@ -11,9 +11,9 @@
 	<script th:src="@{bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
 	<script th:src="@{js/home.js}"></script>
 	<script th:inline="javascript">
-    	let codigos = /*[[${codigos}]]*/ ''
-    	let idUser = /*[[${usuario.idUsuario}]]*/ ''
-    </script>
+		let codigos = /*[[${codigos}]]*/ ''
+		let idUser = /*[[${usuario.idUsuario}]]*/ ''
+	</script>
 	<meta name="_csrf" th:content="${_csrf.token}">
 	<meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
@@ -31,12 +31,13 @@
 		<a type="button" class="boton bs" href="#" data-toggle="modal" data-target="#modalMiPerfil" id="perfil">Mi
 			perfil</a>
 		<a type="button" class="boton bs" href="#" data-toggle="modal" data-target="#modalEstadisticas"
-			id="estadisticas">Ranking</a>
+			id="estadisticas">Estadisticas</a>
 		<a type="button" class="boton bm" href="#" data-toggle="modal" data-target="#modalComoJugar" id="comoJugar">Como
 			Jugar</a>
 		<a type="button" class="boton bm" href="#" data-toggle="modal" data-target="#modalPrivada" id="privada">Partida
 			privada</a>
-		<a type="button" class="boton bl" th:href="@{/joinPublic?idUser={id}(id=${usuario.idUsuario})}" id="jugar">Jugar</a>
+		<a type="button" class="boton bl" th:href="@{/joinPublic?idUser={id}(id=${usuario.idUsuario})}"
+			id="jugar">Jugar</a>
 	</div>
 	</div>
 
@@ -49,20 +50,21 @@
 				</div>
 				<div class="modal-body">
 					<div class="row">
-						<div class="col">
-							<div id="avatar"
+						<div class="col-sm">
+							<div id="avatarUsuario" 
 								th:style="'background-image: url(\''+@{/img/{parametro}(parametro=${usuario.avatar}+'.png')}+'\');'">
 							</div>
-							<div>Nombre de Usuario: <span sec:authentication="principal.username"></span></div>
-							<div>Nombre: <span th:text="${usuario.nombre}"></span></div>
-							<div>Apellidos: <span th:text="${usuario.apellidos}"></span></div>
-							<div>E-Mail: <span th:text="${usuario.email}"></span></div>
-							<div>Puntaje total: <span th:text="${usuario.acumulado}"></span></div>
+							<div><b>Nombre de Usuario:</b> <span sec:authentication="principal.username"></span></div>
+							<div><b>Nombre:</b> <span th:text="${usuario.nombre}"></span></div>
+							<div><b>Apellidos:</b> <span th:text="${usuario.apellidos}"></span></div>
+							<div><b>E-Mail:</b> <span th:text="${usuario.email}"></span></div>
+							<div><b>Partidas jugadas:</b> <span th:text="${usuario.numPartidas}"></span></div>
+							<div><b>Puntuación media:</b> <span th:text="${usuario.media}"></span></div>
 						</div>
-						<div class="col" id="elegirAvatar">
+						<div class="col-sm border mr-3">
 							<p>Elegir Avatar:</p>
-							<div th:each="numero : ${#numbers.sequence(1, 5)}">
-								<a class="botonAvatar"
+							<div id="avatar" th:each="numero : ${#numbers.sequence(1, 20)}">
+								<a class="botonAvatar" th:id="${numero}"
 									th:style="'background-image: url(\''+@{/img/{parametro}(parametro=${numero}+'.png')}+'\');'"
 									type="button"></a>
 							</div>
@@ -71,7 +73,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-					<button type="button" class="btn btn-success" id="guardarAvatar" data-dismiss="modal">Guardar y
+					<button type="button" class="btn btn-primary" id="guardarAvatar" data-dismiss="modal">Guardar y
 						cerrar</button>
 				</div>
 			</div>
@@ -86,16 +88,16 @@
 				</div>
 				<div class="modal-body row">
 					<div class="col">
-						<fieldset class="border p-3 col">
-							<legend class="w-auto">Crear partida</legend>
-							<a th:href="@{/createPrivate?idUser={id}(id=${usuario.idUsuario})}" class="btn btn-primary mb-2 col-sm" type="button">Unirse</a>
+						<fieldset class="border p-3 col">							
+							<a th:href="@{/createPrivate?idUser={id}(id=${usuario.idUsuario})}"
+								class="btn btn-primary mb-2 col-sm" type="button">Crear partida</a>
 							<label class="col-sm text-center"></label>
 						</fieldset>
 					</div>
 					<div class="col">
-						<fieldset class="border p-3 col">
-							<legend class="w-auto">Unirse a partida</legend>
-							<input id="codigo" class="form-control mb-2 col-sm text-center" placeholder="Introducir código">
+						<fieldset class="border p-3 col">							
+							<input id="codigo" class="form-control mb-2 col-sm text-center"
+								placeholder="Introducir código">
 							<a id="unirsePrivada" class="btn btn-primary mb-2 col-sm" type="button">Unirse</a>
 							<label id="errorCodigo" class="col-sm text-center"></label>
 						</fieldset>
@@ -108,14 +110,63 @@
 		</div>
 	</div>
 	<div class="modal" id="modalComoJugar">
-		<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-dialog modal-dialog-centered"  style="max-width: 600px;">
 			<div class="modal-content bg-dark text-light">
 				<div class="modal-header">
 					<h4 class="modal-title">Como Jugar</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 				<div class="modal-body">
+    <p>Word Yacht es un juego que consiste en formar palabras con 10 letras aleatorias en partidas online privadas o públicas con hasta 20 jugadores.</p>
+	<p>La partida tiene 8 turnos, en cada uno de los cuales se obtiene un puntaje según las palabras que se hayan formado y la categoría elegida en ese turno. El ganador será el jugador con mayor puntuación total.</p>
+    <p>Las categorías son las siguientes:</p>
 
+    <ul class="list-group">
+        <li class="list-group-item"><b>3 letras:</b> formar palabras de 3 letras.            
+            <ul class="list-group">
+                <li class="list-group-item">3 palabras - 15 puntos.</li>
+                <li class="list-group-item">5 palabras - 30 puntos.</li>
+                <li class="list-group-item">10 palabras - 45 puntos.</li>
+            </ul>
+        </li>
+        <li class="list-group-item"><b>4 letras:</b> formar palabras de 4 letras.
+            <ul class="list-group">
+                <li class="list-group-item">2 palabras - 15 puntos.</li>
+                <li class="list-group-item">4 palabras - 30 puntos.</li>
+                <li class="list-group-item">6 palabras - 45 puntos.</li>
+            </ul>
+        </li>
+        <li class="list-group-item"><b>5+ letras:</b> formar palabras de 5 o más letras.
+            <ul class="list-group">
+                <li class="list-group-item">1 palabra - 30 puntos.</li>
+                <li class="list-group-item">2 palabras - 50 puntos.</li>
+                <li class="list-group-item">3 palabras - 70 puntos.</li>
+            </ul>
+        </li>
+        <li class="list-group-item"><b>Escalera:</b> formar al menos una palabra de cada longitud.
+            <ul class="list-group">
+                <li class="list-group-item">Escalera de 3 (3/4/5, 4/5/6, etc.) - 25 puntos.</li>
+                <li class="list-group-item">Escalera de 4 (3/4/5/6, 4/5/6,7+ etc.) - 50 puntos.</li>
+                <li class="list-group-item">Escalera de 5 (3/4/5/6/7+) - 75 puntos.</li>
+            </ul>
+        </li>
+        <li class="list-group-item"><b>Inicial:</b> formar palabras con la misma letra inicial.
+            <ul class="list-group">
+                <li class="list-group-item">3 palabras - 15 puntos.</li>
+                <li class="list-group-item">5 palabras - 30 puntos.</li>
+                <li class="list-group-item">10 palabras - 45 puntos.</li>
+            </ul>
+        </li>
+        <li class="list-group-item"><b>Nº de palabras:</b> puntaje según el número de palabras formadas.
+            <ul class="list-group">
+                <li class="list-group-item">Palabras de 3 y 4 letras - 1 punto por cada palabra.</li>
+                <li class="list-group-item">Palabras de 5 letras - 2 puntos por cada palabra.</li>
+                <li class="list-group-item">Palabras de 6 o más letras - 3 puntos por cada palabra.</li>
+            </ul>
+        </li>
+        <li class="list-group-item"><b>Todas:</b> usar todas las letras de un turno para formar palabras (al usar una letra, su color cambia de rojo a negro para identificar cuáles han sido usadas).</li>
+        <li class="list-group-item"><b>Yacht:</b> formar al menos 15 palabras en un turno otorga una puntuación de 75 puntos. Cuando un jugador elige esta categoría, el turno finaliza y los demás jugadores no pueden seguir formando palabras en ese turno.</li>
+    </ul>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -170,14 +221,21 @@
 			<div class="modal-content bg-dark text-light">
 				<div class="modal-header">
 					<h4 class="modal-title">Estadisticas</h4>
-					<div class="mb-12">
-						<button type="button" class="btn btn-primary" id="verRanking">Ranking</button>
-						<button type="button" class="btn btn-secondary" id="verHistorial">Mis partidas</button>
+					<div class="mb-12">						
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 				</div>
-				<div class="modal-body" id="tablaEstadisticas">
-
+				<div class="modal-body larga">
+					<div class="row">
+						<div class="col-md-6">
+							<button type="button" class="btn btn-primary col-sm mb-3" id="verRanking">Ranking</button>
+						</div>
+						<div class="col-md-6">
+							<button type="button" class="btn btn-secondary col-sm mb-3" id="verHistorial">Mis partidas</button>
+						</div>						
+					</div>					
+					<div class="col-sm" id="tablaEstadisticas">						
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

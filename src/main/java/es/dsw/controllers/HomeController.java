@@ -5,12 +5,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import es.dsw.SecurityConfiguration;
 import es.dsw.models.Palabra;
 import es.dsw.models.Partida;
 import es.dsw.models.Usuario;
@@ -32,15 +35,14 @@ public class HomeController {
 		return servicioUsuarios.getAll();
 	}
 
-	// Método que devuelve la lista de usuarios ordenada por su puntuacion acumulada
-	// en orden descendente
+	// Método que devuelve la lista de usuarios ordenada por media de puntuacion por partida (descendente)
 	@GetMapping(value = "/ranking")
 	public List<Usuario> mostrarRanking() {
 		List<Usuario> usuarios = servicioUsuarios.getAll();
 		usuarios.sort(new Comparator<Usuario>() {
 			@Override
 			public int compare(Usuario u1, Usuario u2) {
-				return u2.getAcumulado() - u1.getAcumulado();
+				return (int) (u2.getMedia() - u1.getMedia());
 			}
 		});
 		return usuarios;
@@ -50,18 +52,22 @@ public class HomeController {
 	@GetMapping(value = "/history")
 	public Object[][] mostrarHistorial(@RequestParam(name = "idUsuario") int idUsuario) {
 		// Obtener el usuario por su id
-		Usuario usuario = servicioUsuarios.getUser(idUsuario).get();
+		Usuario usuario = servicioUsuarios.getUser(idUsuario).orElse(null);
 		// Partidas que ha jugado el usuario
 		Map<Partida, Integer> partidas = usuario.getPartidas();
+		// Convertir el mapa a una lista de entradas
+		List<Map.Entry<Partida, Integer>> listaPartidas = new ArrayList<>(partidas.entrySet());
+		// Ordenar la lista según el idPartida de cada entrada
+		Collections.sort(listaPartidas, Comparator.comparing(entry -> entry.getKey().getIdPartida()));		
 		// Jugadores que han participado en las partidas
 		List<Usuario> jugadores = servicioUsuarios.getAll();
 		Object[][] resultados = new Object[partidas.size()][4];
-		// Obtener los datos de cada partida
+		// Obtener los datos de cada partida 
 		int i = 0;
-		for (Entry<Partida, Integer> e : partidas.entrySet()) {
+		for (Map.Entry<Partida, Integer> e : listaPartidas) {
 			Partida partidaUsuario = e.getKey();
-			Integer puntosUsuario = e.getValue();
-			Integer contadorJugadores = 0;
+			Integer puntosUsuario = e.getValue();			
+	        Integer contadorJugadores = 0;	        			
 			ArrayList<Integer> puntuaciones = new ArrayList<Integer>();// Puntuciones de cada jugador
 			for (Usuario jugador : jugadores) {
 				// Verificar si este jugador tiene la misma partida que el usuario
@@ -75,12 +81,12 @@ public class HomeController {
 			Collections.sort(puntuaciones, Collections.reverseOrder());
 			// Obtener la posición del usuario en las puntuaciones ordenadas
 			Integer posicionUsuario = puntuaciones.indexOf(puntosUsuario);
-			// Almacenar los datos en la matriz de resultados
-			resultados[i][0] = partidaUsuario.getFechaPartida();
-			resultados[i][1] = puntosUsuario;
-			resultados[i][2] = contadorJugadores;
-			resultados[i][3] = posicionUsuario + 1 + "ª";
-			i++;
+	        // Almacenar los datos en la matriz de resultados
+	        resultados[i][0] = partidaUsuario.getFechaPartida();
+	        resultados[i][1] = puntosUsuario;
+	        resultados[i][2] = contadorJugadores;
+	        resultados[i][3] = posicionUsuario+1+"ª";
+	        i++;
 		}
 		return resultados;
 	}
@@ -88,21 +94,41 @@ public class HomeController {
 	// Método que modifica el avatar de un usuario en la base de datos
 	@PostMapping(value = "/modAvatar")
 	public void modificarAvatar(@RequestParam(name = "avatar") int avatar,
-			@RequestParam(name = "idUsuario") int idUsuario) {
-		Usuario user = servicioUsuarios.getUser(idUsuario).get();
-		user.setAvatar(avatar);
-		servicioUsuarios.addUser(user);
+								@RequestParam(name = "idUsuario") int idUsuario) {
+		Usuario usuario = servicioUsuarios.getUser(idUsuario).orElse(null);
+		usuario.setAvatar(avatar);
+		servicioUsuarios.addUser(usuario);
 	}
 
 	// Método que elimina usuarios de la base de datos
 	@PostMapping(value = "/deleteUser")
 	public List<Usuario> eliminarUsuarios(@RequestParam(name = "usernames") ArrayList<String> usernames) {
-		for (Usuario e : servicioUsuarios.getAll()) {
-			if (usernames.contains(e.getNombreUsuario())) {
-				servicioUsuarios.deleteUser(e.getIdUsuario());
+		for (Usuario usuario : servicioUsuarios.getAll()) {
+			if (usernames.contains(usuario.getNombreUsuario())) {
+				servicioUsuarios.deleteUser(usuario.getIdUsuario());
+				SecurityConfiguration.inMemory.deleteUser(usuario.getNombreUsuario());
 			}
 		}
 		return servicioUsuarios.getAll();
+	}
+	
+	// Método que modifica el rol de un usuario en la base de datos	
+	@SuppressWarnings("deprecation")
+	@PostMapping(value = "/modRolUser")
+	public void modRolUsuario(@RequestParam(name = "username") String username,
+							  @RequestParam(name = "idRol") int idRol) {
+		for (Usuario usuario : servicioUsuarios.getAll()) {
+			// Si el nombre de usuario es igual al proporcionado, se actualiza su idRol con el nuevo valor.
+			if (usuario.getNombreUsuario().equals(username)) {
+				usuario.setIdRol(idRol);
+				servicioUsuarios.addUser(usuario);
+				// Actualización en la Configuración de Seguridad
+				String rol = usuario.getRol().getNombre();
+				SecurityConfiguration.inMemory.updateUser(
+						User.withDefaultPasswordEncoder().username(username).roles(rol).build());
+				break;
+			}
+		}
 	}
 
 	// METODOS PALABRA
@@ -130,9 +156,9 @@ public class HomeController {
 	@PostMapping(value = "/deleteWord")
 	public String eliminarPalabras(@RequestParam(name = "palabras") ArrayList<String> palabras) {
 		int eliminadas = 0;
-		for (Palabra e : palabraservice.getAll()) {
-			if (palabras.contains(e.getPalabra())) {
-				palabraservice.deleteWord(e.getId());
+		for (Palabra palabra : palabraservice.getAll()) {
+			if (palabras.contains(palabra.getPalabra())) {
+				palabraservice.deleteWord(palabra.getId());
 				eliminadas++;
 			}
 		}

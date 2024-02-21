@@ -1,127 +1,255 @@
-$(document).ready(function() {	
+$(document).ready(function () {
+	//CONFIGURACIÓN DE WEBSOCKET
+	
+	let nJugadores = jugadores.length
 	let stompClient;
-		const socket = new SockJS("/websocket-example");
-		stompClient = Stomp.over(socket);
-			
-		//Conectarse a la partida
-		stompClient.connect({}, function () {
-			//Los demás jugadores notan tu entrada en la partida y puedes ver cada jugador que se une en tiempo real
-			stompClient.send("/app/join", {}, jugador.idUsuario+","+idPartida+","+jugador.avatar+","+jugador.nombreUsuario);
-			//Recibir datos del jugador conectado
-		    stompClient.subscribe("/topic/player", function (respuesta) {
-				let datosJugadorConectado = respuesta.body.split(",")
-				let idJugadorConectado = datosJugadorConectado[0]
-		    	let idPartidaJugadorConectado = datosJugadorConectado[1]
-		    	let avatarJugadorConectado = datosJugadorConectado[2]
-		    	let nombreJugadorConectado = datosJugadorConectado[3]
-		    	
-		    	//Añadir el perfil del jugador que acaba de entrar en la partida
-		    	if (idPartidaJugadorConectado == idPartida && idJugadorConectado != jugador.idUsuario){
-					let fila1 = $("#fila1")
-					let perfil = $("<div>").prop("class","perfil")
-					let avatar = $("<div>").prop("class","avatar").css("background-image","url(../img/"+avatarJugadorConectado+".png)")
-					let nombre = $("<div>").prop("class","nombreJugador").html(nombreJugadorConectado)
-					let puntuacion = $("<div>").html("0")
-					fila1.append(perfil.append(avatar,nombre,puntuacion))
+	const socket = new SockJS("/websocket-example");
+	stompClient = Stomp.over(socket);
+
+	//Conectarse a la partida
+	stompClient.connect({}, function () {
+		//Los demás jugadores notan tu entrada en la partida y puedes ver cada jugador que se une y se va en tiempo real
+		stompClient.send("/app/join", {}, idPartida + "," + jugador.avatar + "," + jugador.nombreUsuario);
+		//Recibir datos del jugador
+		stompClient.subscribe("/topic/player", function (respuesta) {
+			let miNombre = jugador.nombreUsuario
+			let datosJugadorConectado = respuesta.body.split(",")
+			//Un jugador acaba de salir de la partida
+			if (datosJugadorConectado.length == 2 && datosJugadorConectado[0] == idPartida) {
+				nJugadores--
+				//Si sólo queda un jugador en la partida y la partida ya ha comenzado, se termina
+				if (nJugadores == 1 && iniciada) {
+					stompClient.send("/app/end", {}, jugador.nombreUsuario + "," + puntosPartida + "," + idPartida)
 				}
-		    })
+				$(".perfil").each(function () {
+					let nombre = $(this).children().eq(1).html()
+					if (nombre == datosJugadorConectado[1]) {
+						$(this).remove()
+					}
+				})
+				//Un jugador acaba de entrar en la partida
+			} else {
+				let idPartidaJugadorConectado = datosJugadorConectado[0]
+				let avatarJugadorConectado = datosJugadorConectado[1]
+				let nombreJugadorConectado = datosJugadorConectado[2]
+				//Añadir el perfil del jugador que acaba de entrar en la partida
+				if (idPartidaJugadorConectado == idPartida && nombreJugadorConectado != miNombre) {
+					nJugadores++
+					let fila1 = $("#fila1")
+					let perfil = $("<div>").prop("class", "perfil")
+					let avatar = $("<div>").prop("class", "avatar").css("background-image", "url(../img/" + avatarJugadorConectado + ".png)")
+					let nombre = $("<div>").prop("class", "nombreJugador").html(nombreJugadorConectado)
+					let puntuacion = $("<div>").html("0")
+					fila1.append(perfil.append(avatar, nombre, puntuacion))
+					if (tipoPartida == "publica") {
+						//Comienza la partida (Partida pública)
+						$.ajax({
+							url: "/startGame", method: "POST", data: { idPartida: idPartida }, beforeSend: request => request.setRequestHeader(header, token),
+							success: function () {
+								stompClient.send("/app/start", {}, idPartida);
+							},
+							error: function () {
+								alert("Error Fatal")
+							}
+						})
+					}
+				}
+			}
+
+		})
+		//Comienza la partida
+		stompClient.subscribe("/topic/start", function (respuesta) {
+			let idPartidaUsuario = parseInt(respuesta.body)
+			if (idPartidaUsuario == idPartida) {
+				letrasRonda = listaLetras[posicionListaLetras]
+				iniciada = true
+				nuevaRonda()
+			}
+		})
+		let resultados = []
+		//Se toman los resultados de la ronda o los resultados finales de todos los jugadores
+		stompClient.subscribe("/topic/results", function (respuesta) {
+			let resultadosJugador = respuesta.body.split(",")
+			if (resultadosJugador[resultadosJugador.length - 1] == idPartida) {
+				resultados.push(resultadosJugador)
+				if (resultados.length == nJugadores) {
+					if (resultadosJugador.length == 5) {
+						posicionListaLetras += 1
+						letrasRonda = listaLetras[posicionListaLetras]
+						mostrarResultados(resultados)
+						resultados = []
+						//Se da un tiempo a los jugadores para ver sus resultados, después se prepara la nueva ronda
+						setTimeout(function () {
+							rondas++
+							$("#resultados").modal("hide")
+							nuevaRonda()
+						}, 10000)
+					//Termina la partida
+					} else {
+						mostrarResultadoFinal(resultados)
+						finalizada = true
+					}
+				}
+			}
+		})
+	})
+	//CONFIGURACIÓN DEL JUEGO
+	
+	//Se muestran los resultados finales de la partida
+	function mostrarResultadoFinal(resultados) {
+		resultados.sort(function (resultadosJugador1, resultadosJugador2) {
+			return resultadosJugador2[1] - resultadosJugador1[1];
 		});
+		let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Posición</th><th>Usuario</th><th>Puntuación</th></tr>";
+		let posicion = 0
+		for (let resultadosJugador of resultados) {
+			posicion++
+			let fila = "<tr><td>" + posicion + "</td><td>" + resultadosJugador[0] + "</td><td>" + resultadosJugador[1] + "</td></tr>"
+			tabla += fila
+		}
+		tabla += "</table>"
+		$("#resultados .modal-title").html("Resultados de la partida")
+		$("#resultados .modal-body").html(tabla)
+		$("#resultados").modal("show")
+	}
+
+	//Se muestran los resultados de la ronda
+	function mostrarResultados(resultados) {
+		let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Usuario</th><th>Categoría</th><th>Puntuación</th><th>Palabras</th></tr>";
+		for (let resultadosJugador of resultados) {
+			let fila = "<tr><td>" + resultadosJugador[0] + "</td><td>" + resultadosJugador[1] + "</td><td>" + resultadosJugador[2] + "</td><td>" + resultadosJugador[3] + "</td></tr>"
+			tabla += fila
+		}
+		tabla += "</table>"
+		$("#resultados .modal-body").html(tabla)
+		$("#resultados").modal("show")
+		actualizarPerfiles(resultados)
+	}
+
+	//Se actualizan las puntuaciones de los jugadores al finalizar la ronda
+	function actualizarPerfiles(resultados){
+		for (let resultadosJugador of resultados) {
+			let nombreJugador = resultadosJugador[0]
+			let puntuacionJugador = resultadosJugador[2]
+			$(".perfil").each(function () {
+				let nombrePerfil = $(this).children().eq(1).html()
+				let puntuacionPerfil = $(this).children().eq(2)
+				if (nombrePerfil == nombreJugador){
+					puntuacionPerfil.html(parseInt(puntuacionPerfil.html())+parseInt(puntuacionJugador))
+				}
+			})
+		}
+	}
+
 	//Mostrar ventana de inicio de partida
-	$("#iniciarPartida").modal("show")					
+	$("#iniciarPartida").modal("show")
 	//Empezar el juego por el anfitrión
-	$("body").on("click", "#empezar", function() {
-		$(this).prop("hidden", "hidden")
-		empezarTurno()
+	$("body").on("click", "#empezar", function () {
+		if ($(".perfil").toArray().length < 2) {
+			$(".modal-footer > label").html("Tiene que haber un mínimo de 2 jugadores en la partida.")
+		} else {
+			$("#iniciarPartida").modal("hide")
+			$.ajax({
+				url: "/startGame", method: "POST", data: { idPartida: idPartida }, beforeSend: request => request.setRequestHeader(header, token),
+				success: function () {
+					stompClient.send("/app/start", {}, idPartida);
+				},
+				error: function () {
+					alert("Error Fatal")
+				}
+			})
+		}
 	})
 
-	//Cuenta atrás para empezar el juego
-	function empezarTurno() {
+	//El jugador sale de la partida si hace clic en el botón de "Abandonar"
+	$("body").on("click", "#btnAbandonar", function () {
+		stompClient.send("/app/exit", {}, idPartida + "," + jugador.nombreUsuario);
+		$.ajax({
+			url: "/exitGame", method: "POST", data: { idPartida: idPartida, userID: jugador.idUsuario, finalizada: finalizada, puntosPartida: puntosPartida }, beforeSend: request => request.setRequestHeader(header, token)
+		})
+	})
+
+	//Nueva ronda
+	function nuevaRonda() {
 		$("#botones").prop("hidden", "hidden");
 		eventosElegirPuntuacion(false)
-		$(".puntuacion").each(function() {
+		$(".puntuacion").each(function () {
 			if ($(this).css("color") == "rgb(255, 0, 0)") {
 				$(this).css({ "color": "blue", "cursor": "auto" }).prop("class", "")
 			}
 		})
 		limpiarLetras("deshacer")
+		limpiarCategorias()
 		limpiarPalabras()
 		limpiarPostit()
-		//Se acaba el juego y se muestran los resultados y el ganador de la partida
-		if (turnos == 8) {
-			$("#resultados .modal-title").html("Resultados de la partida")
-			$.ajax({
-				url: "/endGame", method: "POST", data: { puntosPartida: puntosPartida, idPartida: partida.idPartida, userID: jugador.idUsuario}, beforeSend: request => request.setRequestHeader(header, token),
-				success: function(jugadores) {
-					let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Usuario</th><th>Puntuación</th></tr>";
-					for (let jugador of jugadores) {
-						let fila = "<tr><td>" + jugador.nombreUsuario + "</td><td>" + jugador.puntos + "</td>"
-						tabla += fila
-					}
-					tabla += "</table>"
-					$("#resultados .modal-body").html(tabla)
-				},
-				error: function() {
-					alert("Error Fatal")
-				}
-			})
-			$("#resultados").modal("show")
+		//Si se han acabado todas las rondas, se termina la partida
+		if (rondas == 8) {
+			stompClient.send("/app/end", {}, jugador.nombreUsuario + "," + puntosPartida + "," + idPartida)
 		}
+		//Si no, se continúa jugando
 		else {
 			generarLetras()
 			$(".letra").prop("hidden", "");
 			$("#letras2").prop("hidden", "");
-			$("#tiempo").html("1")
+			$("#mensaje > span").html("El turno empezará en ")
+			$("#tiempo").html("5")
+			$("#tiempo2").html("")
 			$("#mensaje").prop("hidden", "")
-			intervalo = setInterval(function() {
+			//Cuenta atrás para empezar la nueva ronda
+			intervalo = setInterval(function () {
 				$("#tiempo").html(parseInt($("#tiempo").html()) - 1)
+				//Se acaba el tiempo
 				if ($("#tiempo").html() == "0") {
 					clearInterval(intervalo);
 					$("#mensaje").prop("hidden", "hidden")
 					empezarJuego()
 				}
-			}, 500)
+			}, 1000)
 		}
-
 	}
 
-	//Tiempo restante del turno actual
+	//Cuenta atrás de la ronda actual
 	function tiempoRestante() {
-		$("#tiempo2").html("1")
-		intervalo = setInterval(function() {
+		$("#tiempo2").html("150")
+		intervalo = setInterval(function () {
 			$("#tiempo2").html(parseInt($("#tiempo2").html()) - 1)
 			//Se acaba el tiempo
 			if ($("#tiempo2").html() == "0") {
+				$("#mensaje > span").html("Elige tu puntuación")
+				$("#tiempo").html("")
+				$("#mensaje").prop("hidden", "")
 				clearInterval(intervalo);
 				eventosElegirPuntuacion(true)
 				eventoEscribirPalabras(false)
+				eventoClickLetra(false)
 				eventoEnviar(false)
 				eventoLimpiar(false)
+				$("#botones").prop("hidden", "hidden");
 				//Se da un tiempo a los jugadores para elegir su puntuación
-				setTimeout(function() {
-					$("#resultados").modal("show")
+				setTimeout(function () {
 					//Se calculan los resultados de la ronda
 					let puntosTurno = parseInt($("#total").html())
-					let categoria;
-					let palabras = []
-					$(".puntuacion").each(function() {
+					let categoria
+					let palabras = ""
+					$(".puntuacion").each(function () {
 						if ($(this).css("color") == "rgb(255, 0, 0)") {
 							categoria = $(this).parent().children().html()
 						}
 					})
-					$("#tablaPalabras td").each(function() {
-						if ($(this).html() != "") {
-							palabras.push($(this).html())
+					$("#tablaPalabras td").each(function () {
+						if (!$(this).html() == "") {
+							palabras += $(this).html() + " "
 						}
 					})
-					palabras = palabras.join(",")
-					//Se muestran los resultados de la ronda que acaba de terminar
 					if (categoria == null) {
 						let puntuaciones = []
-						$(".puntuacion").each(function() {
-							puntuaciones.push(parseInt($(this).html()))
+						$(".puntuacion").each(function () {
+							if ($(this).css("color") == "rgb(255, 255, 255)"){
+								puntuaciones.push(parseInt($(this).html()))
+							}
 						})
 						puntosTurno = Math.max(...puntuaciones)
-						$(".puntuacion").each(function() {
+						$(".puntuacion").each(function () {
 							if (parseInt($(this).html()) == puntosTurno) {
 								$(this).css("color", "red")
 								categoria = $(this).parent().children().html()
@@ -130,68 +258,87 @@ $(document).ready(function() {
 						})
 					}
 					puntosPartida += puntosTurno
-					$.ajax({
-						url: "/results", method: "POST", data: { userID: jugador.idUsuario, puntosTurno: puntosTurno, categoria: categoria, palabras: palabras }, beforeSend: request => request.setRequestHeader(header, token),
-						success: function(jugadores) {
-							let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Usuario</th><th>Categoría</th><th>Puntuación</th><th>Palabras</th></tr>";
-							for (let jugador of jugadores) {
-								let fila = "<tr><td>" + jugador.nombreUsuario + "</td><td>" + jugador.categoria + "</td><td>" + jugador.puntos + "</td><td>" + jugador.palabras + "</td></tr>"
-								tabla += fila
-							}
-							tabla += "</table>"
-
-							$("#resultados .modal-body").html(tabla)
-						},
-						error: function() {
-							alert("Error Fatal")
-						}
-					})
-					//Empieza la siguiente ronda después de un tiempo
-					setTimeout(function() {
-						turnos++
-						$("#resultados").modal("hide")
-						empezarTurno()
-					}, 500)
-				}, 500)
+					//Se envían los resultados de la ronda
+					stompClient.send("/app/results", {}, jugador.nombreUsuario + "," + categoria + "," + puntosTurno + "," + palabras + "," + idPartida)
+				}, 10000)
 			}
-		}, 500)
+		}, 1000)
 	}
 
 	let palabrasDiccionario = []
 
-	//Se cargan todas las palabras del diccionario
+	//Se almacenan todas las palabras del diccionario
 	$.ajax({
 		url: "/showWords",
 		method: "GET",
-		success: function(palabras) {
+		success: function (palabras) {
 			for (palabra of palabras) {
 				let textoPalabra = palabra.palabra
 				palabrasDiccionario.push(textoPalabra)
 			}
 		},
-		error: function() {
+		error: function () {
 			alert("Error fatal")
 		}
 	})
 
 	let letrasEscritas = 0
 
+	//Deshacer todas las letras escritas
+	function limpiarLetras(evento) {
+		if (letrasEscritas > 0) {
+			$("#letras2 > div").each(function () {
+				limpiarLetra($(this), evento)
+			})
+		}
+	}
+
+	//Se limpia la libreta de las palabras escritas
 	function limpiarPalabras() {
-		$("#tablaPalabras td").each(function() {
+		$("#tablaPalabras td").each(function () {
 			if ($(this).html() != "") {
 				$(this).html("")
 			}
 		})
+		idPalabra = 1
 	}
 
+	//Se pone en 0 todos los contadores del post-it
 	function limpiarPostit() {
 		$("#postit > table td").html("0")
 		$("#postit #inicial").html("")
 	}
 
-	//Empieza el turno
+	//Se limpia la tabla de categorías después de cada ronda
+	function limpiarCategorias(){
+		palabrasFormadas = []
+		palabras3 = []
+		palabras4 = []
+		palabras5 = []
+		palabras6 = []
+		palabrasmas7 = []
+		inicialesRepe = []
+		mejorInicial = ""
+		mejorContador = 0
+		longitudes = []
+		escalerasFormadas = []
+		$(".npalabras").each(function(){
+			$(this).css("color","white")
+		})
+		$(".puntuacion").each(function(){
+			if ($(this).css("color") == "rgb(255, 255, 255)"){
+				$(this).html("0")
+			}
+		})
+		$("#numPalabras").children().eq(1).html("0")
+		$("#yacht").children().eq(1).css("color","white")
+		$("#total").css("color","white").html("0")
+	}
+
+	//Comienza la nueva ronda
 	function empezarJuego() {
 		$("#botones").prop("hidden", "");
+		eventoClickLetra(true)
 		eventoEscribirPalabras(true)
 		eventoEnviar(true)
 		eventoLimpiar(true)
@@ -206,13 +353,13 @@ $(document).ready(function() {
 			$("body").off("mouseout", ".puntuacion")
 		}
 		else {
-			$("body").on("mouseover", ".puntuacion", function() {
+			$("body").on("mouseover", ".puntuacion", function () {
 				$(this).css({ "color": "red", "cursor": "pointer" })
 			})
-			$("body").on("mouseout", ".puntuacion", function() {
+			$("body").on("mouseout", ".puntuacion", function () {
 				$(this).css({ "color": "white", "cursor": "auto" })
 			})
-			$("body").on("click", ".puntuacion", function() {
+			$("body").on("click", ".puntuacion", function () {
 				let puntuacionElegida = $(this).html()
 				$("#total").html(puntuacionElegida).css("color", "red")
 				$(this).css({ "cursor": "auto" })
@@ -221,19 +368,10 @@ $(document).ready(function() {
 		}
 	}
 
-	//Deshacer todas las letras escritas
-	function limpiarLetras(evento) {
-		if (letrasEscritas > 0) {
-			$("#letras2 > div").each(function() {
-				limpiarLetra($(this), evento)
-			})
-		}
-	}
-
-	//Evento de clic del botón Limpiar
+	//Se activan o desactivan los eventos del botón "Limpiar"
 	function eventoLimpiar(estado) {
 		if (estado) {
-			$("body").on("click", "#btnLimpiar", function() {
+			$("body").on("click", "#btnLimpiar", function () {
 				limpiarLetras("deshacer")
 			})
 		}
@@ -242,10 +380,10 @@ $(document).ready(function() {
 		}
 	}
 
-	//Evento de clic del botón Enviar
+	//Se activan o desactivan los eventos del botón "Enviar"
 	function eventoEnviar(estado) {
 		if (estado) {
-			$("body").on("click", "#btnEnviar", function() {
+			$("body").on("click", "#btnEnviar", function () {
 				enviarPalabra()
 			})
 		} else {
@@ -254,10 +392,10 @@ $(document).ready(function() {
 
 	}
 
-	//Declaracion de variables
+	//Inicialización de variables
 	let token = $("meta[name='_csrf']").attr("content");
 	let header = $("meta[name='_csrf_header']").attr("content");
-	let turnos = 0
+	let rondas = 0
 	let puntosPartida = 0
 	let idPalabra = 1
 	let palabrasFormadas = []
@@ -272,11 +410,16 @@ $(document).ready(function() {
 	let longitudes = []
 	let escaleras = ["345", "456", "567", "678", "789", "3456", "4567", "5678", "6789", "34567", "45678", "56789"]
 	let escalerasFormadas = []
+	let finalizada = false
+	let letrasRonda = ""
+	let posicionListaLetras = 0
+	let listaLetras = letras.split(",")
+	let iniciada = false
 
 	//Se envía la palabra escrita para su posterior validación
 	function enviarPalabra() {
 		let palabra = ""
-		$(".letra2 > div").each(function() {
+		$(".letra2 > div").each(function () {
 			palabra += $(this).html()
 		})
 		if (validarPalabra(palabra)) {
@@ -294,13 +437,14 @@ $(document).ready(function() {
 		$("#postit #massieteletras > td").html(palabrasmas7.length)
 		$("#postit #inicial").html(mejorInicial)
 		$("#postit #ocurrenciasInicial").html(mejorContador)
+		$("#postit #numeroPalabras > td").html(palabrasFormadas.length)
 	}
 
 	//Funcion que actualiza cada una de las categorias de la tabla de la libreta
 	function actualizarCategoria(nOcurrencias, categoria, casos, puntuaciones) {
 		let nLetrasUsadas = 0
 		if (categoria == "#todas") {
-			$(".letra > .textoLetra").each(function() {
+			$(".letra > .textoLetra").each(function () {
 				if ($(this).css("color") == "rgb(0, 0, 0)") {
 					nLetrasUsadas++
 				}
@@ -409,30 +553,52 @@ $(document).ready(function() {
 								mejorInicial = inicialSinRepe
 							}
 						}
+						//Se actualizan los contadores del post-it
 						actualizarPostit()
-						//Se actualizan todas las categorías al mismo tiempo
-						actualizarCategoria(palabras3.length, "#tres", [3, 5, 10], [15, 30, 45])
-						actualizarCategoria(palabras4.length, "#cuatro", [2, 4, 6], [15, 30, 45])
-						actualizarCategoria(palabras5.length + palabras6.length + palabrasmas7.length, "#mascinco", [1, 2, 3], [30, 50, 70])
-						actualizarCategoria(mejorContador, "#ini", [3, 5, 10], [15, 30, 45])
-						actualizarCategoria(palabrasFormadas.length, "#numPalabras", null, null)
-						actualizarCategoria(palabrasFormadas.length, "#yacht", null, null)
-						actualizarCategoria(null, "#escalera", null, [25, 50, 75])
+						//Se actualizan todas las diferentes categorías al mismo tiempo
+						$(".puntuacion").each(function(){
+							if ($(this).css("color") == "rgb(255, 255, 255)"){
+								let categoria = $(this).parent().prop("id")
+								switch (categoria) {
+									case "tres":
+										actualizarCategoria(palabras3.length, "#tres", [3, 5, 10], [15, 30, 45])
+										break;
+									case "cuatro":
+										actualizarCategoria(palabras4.length, "#cuatro", [2, 4, 6], [15, 30, 45])
+										break;
+									case "mascinco":
+										actualizarCategoria(palabras5.length + palabras6.length + palabrasmas7.length, "#mascinco", [1, 2, 3], [30, 50, 70])
+									break;
+									case "ini":
+										actualizarCategoria(mejorContador, "#ini", [3, 5, 10], [15, 30, 45])
+									break;
+									case "numPalabras":
+										actualizarCategoria(palabrasFormadas.length, "#numPalabras", null, null)
+									break;
+									case "yacht":
+										actualizarCategoria(palabrasFormadas.length, "#yacht", null, null)
+									break;
+									case "escalera":
+										actualizarCategoria(null, "#escalera", null, [25, 50, 75])
+									break;
+								}
+							}
+						})									
 						idPalabra++
 						return true
 					} else {
-						alert("La palabra debe tener más de 2 letras.")
+						
 					}
 				}
 				else {
-					alert("Esa palabra ya está añadida.")
+					
 				}
 			}
 			else {
-				alert("No caben más palabras.")
+				
 			}
 		} else {
-			alert("Esa palabra no existe.")
+			
 		}
 
 	}
@@ -458,7 +624,7 @@ $(document).ready(function() {
 	//Evento de tecla que espera recibir una letra de las mostradas, la tecla Retroceso o la tecla Entrar
 	function eventoEscribirPalabras(estado) {
 		if (estado) {
-			$(document).keydown(function(event) {
+			$(document).keydown(function (event) {
 				let teclaIntroducida = event.key
 				//Si se pulsa la tecla Retroceso se deshace la última letra escrita, volviendo a su posición original
 				if (teclaIntroducida == "Backspace") {
@@ -479,15 +645,7 @@ $(document).ready(function() {
 						let encontrada = false
 						//Coincidencia de letra
 						if (letra.children().html() == teclaIntroducida.toUpperCase()) {
-							//Añadir letra
-							let letra2 = $("<div>").prop("class", "letra2").attr("id", letra.attr("id"))
-							let textoLetra = letra.children()
-							letra2.append(textoLetra)
-							$("#letras2").append(letra2)
-							//Borrar letra seleccionada
-							letra.css("opacity", "0")
-							letra.children().remove()
-							letrasEscritas++
+							escribirLetra(letra)
 							encontrada = true
 						}
 						if (encontrada) {
@@ -501,21 +659,33 @@ $(document).ready(function() {
 		}
 	}
 
-	//Se generan diez letras aleatorias con un mínimo de 3 vocales
+	function eventoClickLetra(estado){
+		if (estado){
+			$("body").on("click",".letra",function(){
+				escribirLetra($(this))
+			})
+		} else {
+			$("body").off("click",".letra")
+		}
+	}
+
+	function escribirLetra(letra){
+		let letraSeleccionada = letra
+		//Añadir letra
+		let letra2 = $("<div>").prop("class", "letra2").attr("id", letraSeleccionada.attr("id"))
+		let textoLetra = letraSeleccionada.children()
+		letra2.append(textoLetra)
+		$("#letras2").append(letra2)
+		//Borrar letra seleccionada
+		letraSeleccionada.css("opacity", "0")
+		letraSeleccionada.children().remove()
+		letrasEscritas++
+	}
+
+	//Se muestran diez letras aleatorias con un mínimo de 3 vocales en cada ronda
 	function generarLetras() {
-		let vocales = "AEIOU"
-		let alfabeto = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
-		let listaLetras = []
-		for (let i = 0; i < 3; i++) {
-			let vocal = vocales[Math.floor(Math.random() * 5)]
-			listaLetras.push(vocal)
-		}
-		for (let i = 0; i < 7; i++) {
-			let letra = alfabeto[Math.floor(Math.random() * 22)]
-			listaLetras.push(letra)
-		}
-		$(".letra").each(function(i) {
-			$(this).children().html(listaLetras[i])
+		$(".letra").each(function (i) {
+			$(this).children().html(letrasRonda[i])
 			$(this).children().css("color", "red")
 		})
 	}

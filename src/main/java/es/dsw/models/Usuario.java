@@ -2,6 +2,7 @@ package es.dsw.models;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -35,8 +36,6 @@ public class Usuario {
 	private String email;
 	@Column(name = "insert_date", insertable = false)
 	private String fecha_registro;
-	@Column(name = "puntos_acum")
-	private int acumulado;
 	@Column(name = "avatar")
 	private int avatar;
 	@Column(name = "id_rol_us", insertable = false)
@@ -56,10 +55,8 @@ public class Usuario {
 	@Transient
 	private String[] palabras;
 	@Transient
-	private String categoria;	
-	@Transient
-	private int puntos;
-	
+	private String categoria;
+
 	public Usuario() {
 
 	}
@@ -72,22 +69,49 @@ public class Usuario {
 		this.email = email;
 	}
 
+	// Metódo que devuelve el numero de partidas que ha jugado el usuario
+	public int getNumPartidas() {
+		return this.getPartidas().size();
+	}
+
+	// Metódo que devuelve la media de puntuación del usuario
+	public double getMedia() {
+		double media = 0;
+		if (this.getNumPartidas() > 0) {
+			media = (double) this.getAcumulado() / this.getNumPartidas();
+		}
+		return Math.round(media * 100.0) / 100.0;
+	}
+
 	// Metodo para unirse a una partida
 	public void asociarAPartida(Partida partida) {
 		this.partidas.put(partida, 0);
 	}
 
-	// Metodo que modifica los puntos del usuario en una partida
-	public void actualizarPuntos(Partida partida, int puntos) {
+	// Metodo para salir de una partida
+	public void salirDePartida(int idPartida) {
+		for (Entry<Partida, Integer> usuarioPartida : this.getPartidas().entrySet()) {
+			Partida partida = usuarioPartida.getKey();
+			if (partida.getIdPartida() == idPartida) {
+				this.getPartidas().remove(partida);
+				break;
+			}
+		}
+	}
+
+	// Metodo que calcula la puntuacion total del usuario de todas las partidas que ha jugado
+	public int getAcumulado() {
+		int puntuacionTotal = 0;
+		for (Entry<Partida, Integer> usuarioPartida : this.getPartidas().entrySet()) {
+			int puntos = usuarioPartida.getValue();
+			puntuacionTotal += puntos;
+		}
+		return puntuacionTotal;
+	}
+
+	// Metodo que modifica los puntos totales del usuario en una partida
+	public void puntosPartida(Partida partida, int puntos) {
 		this.partidas.put(partida, puntos);
-	}
-
-	public int getPuntos() {
-		return puntos;
-	}
-
-	public void setPuntos(int puntos) {
-		this.puntos = puntos;
 	}
 
 	public void setIdRol(int idRol) {
@@ -104,14 +128,6 @@ public class Usuario {
 
 	public void setFecha_registro(String fecha_registro) {
 		this.fecha_registro = fecha_registro;
-	}
-
-	public int getAcumulado() {
-		return acumulado;
-	}
-
-	public void setAcumulado(int acumulado) {
-		this.acumulado = acumulado;
 	}
 
 	public int getAvatar() {

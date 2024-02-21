@@ -1,9 +1,7 @@
 package es.dsw.controllers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -65,14 +63,14 @@ public class GameController {
 		partida.setCodPrivada(codigo);
 		// Insertar la partida en la base de datos
 		partidaService.addGame(partida);
-		return "redirect:/joinPrivate?code="+codigo+"&idUser="+idUsuario;
+		return "redirect:/joinPrivate?code="+codigo+"&idUser="+idUsuario+"&host=true";
 	}
 
 	//Unirse a partida privada
 	@GetMapping(value = "/joinPrivate")
 	public String partidaPrivada(@RequestParam(name = "code") int codigo,
 								 @RequestParam(name = "idUser") int idUsuario,
-								 @RequestParam(name = "guest", defaultValue = "false") boolean invitado,
+								 @RequestParam(name = "host", defaultValue = "false") boolean anfitrion,
 								 Model model) {
 		// Buscar partida privada según el código
 		for (Partida e : partidaService.getAll()) {
@@ -87,7 +85,9 @@ public class GameController {
 		model.addAttribute("idPartida", partida.getIdPartida());
 		model.addAttribute("codPartida", partida.getCodPrivada());
 		model.addAttribute("jugador", usuario);
-		model.addAttribute("invitado", invitado);
+		model.addAttribute("anfitrion", anfitrion);
+		model.addAttribute("tipoPartida", "privada");
+		model.addAttribute("letras", partida.getLetras());
 		return "juego";
 	}
 
@@ -114,6 +114,9 @@ public class GameController {
 		model.addAttribute("idPartida", partida.getIdPartida());
 		model.addAttribute("codPartida", partida.getCodPrivada());
 		model.addAttribute("jugador", usuario);
+		model.addAttribute("anfitrion", false);
+		model.addAttribute("tipoPartida", "publica");
+		model.addAttribute("letras", partida.getLetras());
 		return "juego";
 	}
 }
