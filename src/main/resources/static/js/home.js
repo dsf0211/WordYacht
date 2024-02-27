@@ -3,6 +3,7 @@ $(document).ready(function() {
 	$("body").on("click", "#estadisticas", function() {
 		mostrarRanking();
 		$("#verRanking").prop("class","btn btn-primary col-sm mb-3")
+		$("#verHistorial").prop("class","btn btn-secondary col-sm mb-3")
 	})	
 	// Mostrar ranking
 	$("body").on("click", "#verRanking", function() {
@@ -147,6 +148,7 @@ $(document).ready(function() {
 	$(document).on('click', '#listaPalabras li', function() {
 		$(this).toggleClass('seleccionada');
 	});
+	// Eliminar palabra/s
 	$("body").on("click", '#eliminarPalabra', function() {
 		var seleccionadas = [];
 		$(".seleccionada").each(function() {
@@ -155,6 +157,7 @@ $(document).ready(function() {
 		});
 		let token = $("meta[name='_csrf']").attr("content");
 		let header = $("meta[name='_csrf_header']").attr("content");
+		// El usuario no ha seleccionado ninguna palabra a eliminar
 		if (!seleccionadas.length > 0) {
 			$('#mensajePalabras').html("No ha seleccionado ninguna palabra");
 		}
@@ -237,11 +240,11 @@ $(document).ready(function() {
 	        }
 	    });
 	});
-	// Seleccionar las filas de la tabla
+	// Seleccionar usuarios de la tabla de usuarios
 	$("body").on("click", "#tablaUsuarios > table td:not(:has(select))", function() {
 		$(this).parent().toggleClass("seleccionada");
 	});
-	//Borrar las filas seleccionadas
+	//Borrar usuarios de la tabla de usuarios
 	$("body").on("click", "#eliminarUsuarios", function() {
 		// Obtener los nombres de usuario de las filas seleccionadas
 		var seleccionados = [];
@@ -251,7 +254,7 @@ $(document).ready(function() {
 		});
 		let token = $("meta[name='_csrf']").attr("content");
 		let header = $("meta[name='_csrf_header']").attr("content");
-
+		// El usuario no ha seleccionado ningún usuario a eliminar
 		if (!seleccionados.length > 0) {
 			alert("No hay ningun usuario seleccionado")
 		}
@@ -267,7 +270,7 @@ $(document).ready(function() {
 					crearTablaUsuarios(data)
 				},
 				error: function() {
-					alert("Error al eliminar usuario")
+					alert("No se pudo eliminar el usuario")
 				}
 			});
 		}

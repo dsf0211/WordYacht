@@ -17,31 +17,37 @@ public class GameController2 {
 	@Autowired
 	private PartidaService partidaService;
 	
+	//Empezar la partida 
 	@PostMapping(value = "/startGame")
 	public void finalizarPartida(@RequestParam(name = "idPartida") int idPartida) {
 		Partida partidaActual = partidaService.getGame(idPartida).get(); 
+		//Se actualiza el estado de la partida a "iniciada"
 		partidaActual.setEstado("iniciada");
 		partidaService.addGame(partidaActual);
 	}
 	
-	@PostMapping(value="/exitGame")
+	//Perder la puntuacion de la partida
+	@PostMapping(value="/deleteGame")
 	public void salirPartida(@RequestParam(name = "idPartida") int idPartida,
 							 @RequestParam(name = "userID") int idUser,
-							 @RequestParam(name = "finalizada") boolean finalizada,
 							 @RequestParam(name = "puntosPartida") int puntosPartida) {
+		Usuario user = servicioUsuarios.getUser(idUser).get();
+		//Se borra el registro que relaciona el usuario con la partida
+		user.salirDePartida(idPartida);
+		servicioUsuarios.addUser(user);
+	}
+	//Guardar la puntuacion de la partida
+	@PostMapping(value="/saveGame")
+	public void guardarPartida(@RequestParam(name = "idPartida") int idPartida,
+			 				   @RequestParam(name = "userID") int idUser,
+			 				   @RequestParam(name = "puntosPartida") int puntosPartida) {
 		Partida partidaActual = partidaService.getGame(idPartida).get();
 		Usuario user = servicioUsuarios.getUser(idUser).get();
-		if (finalizada) {
-			//Se actualiza el estado de la partida a "finalizada"
-			partidaActual.setEstado("finalizada");
-			partidaService.addGame(partidaActual);
-			//Se actualiza la puntuacion de la partida de cada jugador
-			user.puntosPartida(partidaActual, puntosPartida);
-			servicioUsuarios.addUser(user);
-		} else {
-			//Se borra el registro que relaciona el usuario con la partida
-			user.salirDePartida(idPartida);
-			servicioUsuarios.addUser(user);
-		}
+		//Se actualiza el estado de la partida a "finalizada"
+		partidaActual.setEstado("finalizada");
+		partidaService.addGame(partidaActual);
+		//Se actualiza la puntuacion de la partida de cada jugador
+		user.puntosPartida(partidaActual, puntosPartida);
+		servicioUsuarios.addUser(user);
 	}
 }

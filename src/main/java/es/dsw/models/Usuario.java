@@ -15,7 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyJoinColumn;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "usuario")
@@ -51,11 +50,6 @@ public class Usuario {
 	@MapKeyJoinColumn(name = "id_partida_up")
 	@Column(name = "puntos")
 	private Map<Partida, Integer> partidas = new HashMap<>();
-
-	@Transient
-	private String[] palabras;
-	@Transient
-	private String categoria;
 
 	public Usuario() {
 
@@ -112,6 +106,11 @@ public class Usuario {
 	// Metodo que modifica los puntos totales del usuario en una partida
 	public void puntosPartida(Partida partida, int puntos) {
 		this.partidas.put(partida, puntos);
+	}
+	
+	// Metodo que devuelve el nombre del rol del usuario
+	public String getNombreRol () {
+		return this.getRol().getNombre();
 	}
 
 	public void setIdRol(int idRol) {
@@ -201,21 +200,4 @@ public class Usuario {
 	public void setPartidas(Map<Partida, Integer> partidas) {
 		this.partidas = partidas;
 	}
-
-	public String[] getPalabras() {
-		return palabras;
-	}
-
-	public void setPalabras(String[] palabras) {
-		this.palabras = palabras;
-	}
-
-	public String getCategoria() {
-		return categoria;
-	}
-
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
-	}
-
 }

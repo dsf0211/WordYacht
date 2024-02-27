@@ -35,6 +35,7 @@ public class Partida {
         this.letras = generarLetras();
 	}
 
+	//Método que genera 8 listas (para 8 rondas) de 10 letras aleatorias comunes a todos los jugadores de la partida
 	public String generarLetras() {
 		String vocales = "AEIOU";
 		String alfabeto = "ABBCCDDEFFGGHIJKLLMMNÑOPPQRRSSTTUVWXYZ";

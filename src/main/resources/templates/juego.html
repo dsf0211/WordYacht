@@ -58,6 +58,7 @@
 				</div>
 				<div class="modal-footer">
 					<a type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</a>
+					<a hidden type="button" class="btn btn-danger btnAbandonar" th:href="@{/home}">Ir al menú principal</a>
 				</div>
 			</div>
 		</div>
@@ -73,9 +74,9 @@
 		<div id="palabras">
 			<div id="libreta">
 				<table id="tablaPalabras">
-					<tr th:each="numero : ${#numbers.sequence(1,12)}">
+					<tr th:each="numero : ${#numbers.sequence(1,14)}">
 						<td th:id = "${numero}"></td>
-						<td th:id = "${numero+12}"></td>
+						<td th:id = "${numero+14}"></td>
 					</tr>
 				</table>
 			</div>
@@ -97,7 +98,7 @@
 				<div id="cuentaAtras"><span id="tiempo2"></span></div>
 			</div>
 			<div id="pie">
-				<a id="btnAbandonar" type="button" class="btn btn-danger" th:href="@{/home}">Abandonar</a>
+				<a type="button" class="btn btn-danger btnAbandonar" th:href="@{/home}">Abandonar</a>
 				<div id="postit">
 					<table>
 						<tr id="numeroPalabras"><th>Nº palabras</th><td>0</td></tr>
@@ -115,7 +116,7 @@
 		<div id="categorias">
 			<div id="pizarra">
 				<table id="tablaCategorias">
-					<tr><th>Nombre: </th><td colspan="4">NombreJugador</td></tr>
+					<tr><th>Nombre: </th><td colspan="4" th:text="${jugador.nombreUsuario}"></td></tr>
 					<tr><th class="titulo">CATEGORÍA</th><th class="titulo" colspan="3">PALABRAS</th><th class="titulo">PUNTOS</th></tr>
 					<tr id="tres"><th>3 letras</th><td class="npalabras">3</td><td class="npalabras">5</td><td class="npalabras">10</td><td class="puntuacion">0</td></tr>
 					<tr id="cuatro"><th>4 letras</th><td class="npalabras">2</td><td class="npalabras">4</td><td class="npalabras">6</td><td class="puntuacion">0</td></tr>
@@ -125,7 +126,6 @@
 					<tr id="todas"><th>Todas</th><td colspan="3"></td><td class="puntuacion">0</td></tr>
 					<tr id="numPalabras"><th>Nº palabras</th><td colspan="3">0</td><td class="puntuacion">0</td></tr>
 					<tr id="yacht"><th>Yacht</th><td colspan="3">15</td><td class="puntuacion">0</td></tr>
-					<tr><th>TOTAL</th><td colspan="3"></td><td id="total" style="font-weight: bold;">0</td></tr>	
 				</table>
 			</div>
 		</div>

@@ -84,15 +84,19 @@ public class IndexController {
 			@RequestParam(name = "email", defaultValue = "") String email, HttpServletRequest request,
 			HttpServletResponse response) {
 
+		//Cerrar sesión
 		SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 		logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
 		SecurityContextHolder.clearContext();
 
+		//Añadir usuario a la base de datos 
 		Usuario user = new Usuario(nombreUsuario, contra, nombre, apellidos, email);
 		boolean aniadido = servicioUsuarios.addUser(user);
 		if (!aniadido) {
+			//Mensaje de error si no se realizó la inserción correctamente
 			return "redirect:/register?error";
 		}
+		//Actualización en la Configuración de Seguridad
 		SecurityConfiguration.inMemory.createUser(
 				User.withDefaultPasswordEncoder().username(nombreUsuario).password(contra).roles("jugador").build());
 		return "redirect:/index";

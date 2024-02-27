@@ -1,4 +1,29 @@
 $(document).ready(function () {
+	//Inicialización de variables
+	let token = $("meta[name='_csrf']").attr("content");
+	let header = $("meta[name='_csrf_header']").attr("content");
+	let rondas = 0
+	let puntosPartida = 0
+	let idPalabra = 1
+	let palabrasFormadas = []
+	let palabras3 = []
+	let palabras4 = []
+	let palabras5 = []
+	let palabras6 = []
+	let palabrasmas7 = []
+	let inicialesRepe = []
+	let mejorInicial = ""
+	let mejorContador = 0
+	let longitudes = []
+	let escaleras = ["345", "456", "567", "678", "789", "3456", "4567", "5678", "6789", "34567", "45678", "56789"]
+	let escalerasFormadas = []
+	let finalizada = false
+	let letrasRonda = ""
+	let posicionListaLetras = 0
+	let listaLetras = letras.split(",")
+	let iniciada = false
+	let intervalo;
+	
 	//CONFIGURACIÓN DE WEBSOCKET
 	
 	let nJugadores = jugadores.length
@@ -15,19 +40,20 @@ $(document).ready(function () {
 			let miNombre = jugador.nombreUsuario
 			let datosJugadorConectado = respuesta.body.split(",")
 			//Un jugador acaba de salir de la partida
-			if (datosJugadorConectado.length == 2 && datosJugadorConectado[0] == idPartida) {
+			if (datosJugadorConectado.length == 2 && datosJugadorConectado[0] == idPartida && datosJugadorConectado[1] != miNombre) {
 				nJugadores--
 				//Si sólo queda un jugador en la partida y la partida ya ha comenzado, se termina
 				if (nJugadores == 1 && iniciada) {
 					stompClient.send("/app/end", {}, jugador.nombreUsuario + "," + puntosPartida + "," + idPartida)
 				}
+				//El perfil del jugador que acaba de salir desaparece
 				$(".perfil").each(function () {
 					let nombre = $(this).children().eq(1).html()
 					if (nombre == datosJugadorConectado[1]) {
 						$(this).remove()
 					}
 				})
-				//Un jugador acaba de entrar en la partida
+			//Un jugador acaba de entrar en la partida
 			} else {
 				let idPartidaJugadorConectado = datosJugadorConectado[0]
 				let avatarJugadorConectado = datosJugadorConectado[1]
@@ -42,14 +68,11 @@ $(document).ready(function () {
 					let puntuacion = $("<div>").html("0")
 					fila1.append(perfil.append(avatar, nombre, puntuacion))
 					if (tipoPartida == "publica") {
-						//Comienza la partida (Partida pública)
+						//Comienza la partida (partida pública)
 						$.ajax({
 							url: "/startGame", method: "POST", data: { idPartida: idPartida }, beforeSend: request => request.setRequestHeader(header, token),
 							success: function () {
 								stompClient.send("/app/start", {}, idPartida);
-							},
-							error: function () {
-								alert("Error Fatal")
 							}
 						})
 					}
@@ -73,6 +96,7 @@ $(document).ready(function () {
 			if (resultadosJugador[resultadosJugador.length - 1] == idPartida) {
 				resultados.push(resultadosJugador)
 				if (resultados.length == nJugadores) {
+					//Resultados de la ronda de todos los jugadores
 					if (resultadosJugador.length == 5) {
 						posicionListaLetras += 1
 						letrasRonda = listaLetras[posicionListaLetras]
@@ -84,10 +108,14 @@ $(document).ready(function () {
 							$("#resultados").modal("hide")
 							nuevaRonda()
 						}, 10000)
-					//Termina la partida
+					//Resultados de la partida de todos los jugadores. Termina la partida
 					} else {
+						clearInterval(intervalo)
 						mostrarResultadoFinal(resultados)
 						finalizada = true
+						$.ajax({
+							url: "/saveGame", method: "POST", data: { idPartida: idPartida, userID: jugador.idUsuario, puntosPartida: puntosPartida }, beforeSend: request => request.setRequestHeader(header, token)
+						})	
 					}
 				}
 			}
@@ -111,9 +139,13 @@ $(document).ready(function () {
 		$("#resultados .modal-title").html("Resultados de la partida")
 		$("#resultados .modal-body").html(tabla)
 		$("#resultados").modal("show")
+		$("#mensaje").remove()
+		$("#tiempo2").remove()
+		$("#resultados .modal-footer").children().eq(0).prop("hidden","hidden")
+		$("#resultados .modal-footer").children().eq(1).prop("hidden","")
 	}
 
-	//Se muestran los resultados de la ronda
+	//Se muestran los resultados de la ronda y se actualizan las puntuaciones
 	function mostrarResultados(resultados) {
 		let tabla = "<table class='table table-striped table-dark text-center'><tr><th>Usuario</th><th>Categoría</th><th>Puntuación</th><th>Palabras</th></tr>";
 		for (let resultadosJugador of resultados) {
@@ -143,7 +175,7 @@ $(document).ready(function () {
 
 	//Mostrar ventana de inicio de partida
 	$("#iniciarPartida").modal("show")
-	//Empezar el juego por el anfitrión
+	//El anfitrión comienza la partida (partida privada)
 	$("body").on("click", "#empezar", function () {
 		if ($(".perfil").toArray().length < 2) {
 			$(".modal-footer > label").html("Tiene que haber un mínimo de 2 jugadores en la partida.")
@@ -153,20 +185,20 @@ $(document).ready(function () {
 				url: "/startGame", method: "POST", data: { idPartida: idPartida }, beforeSend: request => request.setRequestHeader(header, token),
 				success: function () {
 					stompClient.send("/app/start", {}, idPartida);
-				},
-				error: function () {
-					alert("Error Fatal")
 				}
 			})
 		}
 	})
 
 	//El jugador sale de la partida si hace clic en el botón de "Abandonar"
-	$("body").on("click", "#btnAbandonar", function () {
+	$("body").on("click", ".btnAbandonar", function () {
 		stompClient.send("/app/exit", {}, idPartida + "," + jugador.nombreUsuario);
-		$.ajax({
-			url: "/exitGame", method: "POST", data: { idPartida: idPartida, userID: jugador.idUsuario, finalizada: finalizada, puntosPartida: puntosPartida }, beforeSend: request => request.setRequestHeader(header, token)
-		})
+		//Si la partida aún no ha finalizado, además pierde su puntuación
+		if (!finalizada){
+			$.ajax({
+				url: "/deleteGame", method: "POST", data: { idPartida: idPartida, userID: jugador.idUsuario, puntosPartida: puntosPartida }, beforeSend: request => request.setRequestHeader(header, token)
+			})
+		}
 	})
 
 	//Nueva ronda
@@ -228,12 +260,13 @@ $(document).ready(function () {
 				//Se da un tiempo a los jugadores para elegir su puntuación
 				setTimeout(function () {
 					//Se calculan los resultados de la ronda
-					let puntosTurno = parseInt($("#total").html())
+					let puntosTurno;
 					let categoria
 					let palabras = ""
 					$(".puntuacion").each(function () {
 						if ($(this).css("color") == "rgb(255, 0, 0)") {
 							categoria = $(this).parent().children().html()
+							puntosTurno = parseInt($(this).html())
 						}
 					})
 					$("#tablaPalabras td").each(function () {
@@ -276,9 +309,6 @@ $(document).ready(function () {
 				let textoPalabra = palabra.palabra
 				palabrasDiccionario.push(textoPalabra)
 			}
-		},
-		error: function () {
-			alert("Error fatal")
 		}
 	})
 
@@ -332,7 +362,6 @@ $(document).ready(function () {
 		})
 		$("#numPalabras").children().eq(1).html("0")
 		$("#yacht").children().eq(1).css("color","white")
-		$("#total").css("color","white").html("0")
 	}
 
 	//Comienza la nueva ronda
@@ -360,8 +389,6 @@ $(document).ready(function () {
 				$(this).css({ "color": "white", "cursor": "auto" })
 			})
 			$("body").on("click", ".puntuacion", function () {
-				let puntuacionElegida = $(this).html()
-				$("#total").html(puntuacionElegida).css("color", "red")
 				$(this).css({ "cursor": "auto" })
 				eventosElegirPuntuacion(false)
 			})
@@ -392,30 +419,6 @@ $(document).ready(function () {
 
 	}
 
-	//Inicialización de variables
-	let token = $("meta[name='_csrf']").attr("content");
-	let header = $("meta[name='_csrf_header']").attr("content");
-	let rondas = 0
-	let puntosPartida = 0
-	let idPalabra = 1
-	let palabrasFormadas = []
-	let palabras3 = []
-	let palabras4 = []
-	let palabras5 = []
-	let palabras6 = []
-	let palabrasmas7 = []
-	let inicialesRepe = []
-	let mejorInicial = ""
-	let mejorContador = 0
-	let longitudes = []
-	let escaleras = ["345", "456", "567", "678", "789", "3456", "4567", "5678", "6789", "34567", "45678", "56789"]
-	let escalerasFormadas = []
-	let finalizada = false
-	let letrasRonda = ""
-	let posicionListaLetras = 0
-	let listaLetras = letras.split(",")
-	let iniciada = false
-
 	//Se envía la palabra escrita para su posterior validación
 	function enviarPalabra() {
 		let palabra = ""
@@ -424,7 +427,7 @@ $(document).ready(function () {
 		})
 		if (validarPalabra(palabra)) {
 			limpiarLetras("confirmar")
-			actualizarCategoria(null, "#todas", null)
+			actualizarCategoria(null, "#todas", null, null)
 		}
 	}
 
@@ -440,7 +443,7 @@ $(document).ready(function () {
 		$("#postit #numeroPalabras > td").html(palabrasFormadas.length)
 	}
 
-	//Funcion que actualiza cada una de las categorias de la tabla de la libreta
+	//Funcion que actualiza cada una de las categorias de la tabla de la pizarra
 	function actualizarCategoria(nOcurrencias, categoria, casos, puntuaciones) {
 		let nLetrasUsadas = 0
 		if (categoria == "#todas") {
@@ -498,10 +501,10 @@ $(document).ready(function () {
 	//Se valida la palabra enviada
 	function validarPalabra(palabra) {
 		if (palabrasDiccionario.includes(palabra)) {
-			if (idPalabra < 25) {
+			if (idPalabra < 29) {
 				if (!palabrasFormadas.includes(palabra)) {
 					if (palabra.length >= 3) {
-						//Se añade la palabra escrita a la pizarra
+						//Se añade la palabra escrita a la libreta
 						$("#tablaPalabras #" + idPalabra).html(palabra)
 
 						palabrasFormadas.push(palabra)
@@ -659,6 +662,7 @@ $(document).ready(function () {
 		}
 	}
 
+	//Se activa o desactiva el evento de click en las letras
 	function eventoClickLetra(estado){
 		if (estado){
 			$("body").on("click",".letra",function(){
@@ -668,7 +672,8 @@ $(document).ready(function () {
 			$("body").off("click",".letra")
 		}
 	}
-
+	
+	//Se escribe la letra elegida por el jugador
 	function escribirLetra(letra){
 		let letraSeleccionada = letra
 		//Añadir letra
@@ -682,7 +687,7 @@ $(document).ready(function () {
 		letrasEscritas++
 	}
 
-	//Se muestran diez letras aleatorias con un mínimo de 3 vocales en cada ronda
+	//Se muestran 10 letras aleatorias en cada ronda
 	function generarLetras() {
 		$(".letra").each(function (i) {
 			$(this).children().html(letrasRonda[i])

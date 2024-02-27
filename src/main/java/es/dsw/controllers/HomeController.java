@@ -18,6 +18,7 @@ import es.dsw.models.Palabra;
 import es.dsw.models.Partida;
 import es.dsw.models.Usuario;
 import es.dsw.services.PalabraService;
+import es.dsw.services.RolService;
 import es.dsw.services.UsuarioService;
 
 //Controladora que se encarga de procesar las peticiones asíncronas desde Javascript
@@ -28,6 +29,8 @@ public class HomeController {
 
 	@Autowired
 	private UsuarioService servicioUsuarios;
+	@Autowired
+	private RolService rolService;
 
 	// Método que devuelve toda la información de los usuarios de la base de datos
 	@GetMapping(value = "/showUsers")
@@ -106,6 +109,7 @@ public class HomeController {
 		for (Usuario usuario : servicioUsuarios.getAll()) {
 			if (usernames.contains(usuario.getNombreUsuario())) {
 				servicioUsuarios.deleteUser(usuario.getIdUsuario());
+				// Actualización en la Configuración de Seguridad
 				SecurityConfiguration.inMemory.deleteUser(usuario.getNombreUsuario());
 			}
 		}
@@ -113,23 +117,24 @@ public class HomeController {
 	}
 	
 	// Método que modifica el rol de un usuario en la base de datos	
-	@SuppressWarnings("deprecation")
-	@PostMapping(value = "/modRolUser")
-	public void modRolUsuario(@RequestParam(name = "username") String username,
-							  @RequestParam(name = "idRol") int idRol) {
-		for (Usuario usuario : servicioUsuarios.getAll()) {
-			// Si el nombre de usuario es igual al proporcionado, se actualiza su idRol con el nuevo valor.
-			if (usuario.getNombreUsuario().equals(username)) {
-				usuario.setIdRol(idRol);
-				servicioUsuarios.addUser(usuario);
-				// Actualización en la Configuración de Seguridad
-				String rol = usuario.getRol().getNombre();
-				SecurityConfiguration.inMemory.updateUser(
-						User.withDefaultPasswordEncoder().username(username).roles(rol).build());
-				break;
-			}
+		@SuppressWarnings("deprecation")
+		@PostMapping(value = "/modRolUser")
+		public void modRolUsuario(@RequestParam(name = "username") String username,
+								  @RequestParam(name = "idRol") int idRol) {
+			for (Usuario usuario : servicioUsuarios.getAll()) {
+				// Si el nombre de usuario es igual al proporcionado, se actualiza su idRol con el nuevo valor.
+				if (usuario.getNombreUsuario().equals(username)) {
+					//Actualización en la base de datos
+					usuario.setIdRol(idRol);
+					usuario.setRol(rolService.getRole(idRol).get());
+					servicioUsuarios.addUser(usuario);
+					// Actualización en la Configuración de Seguridad
+					SecurityConfiguration.inMemory.updateUser(
+							User.withDefaultPasswordEncoder().username(username).roles(usuario.getNombreRol()).password(usuario.getContra()).build());
+					break;
+				}
+			}		
 		}
-	}
 
 	// METODOS PALABRA
 
